@@ -14,18 +14,39 @@ class Admin_Settings
   /**
    * Register all plugin settings
    */
-  public function register_settings()
+  public function register_settings(): void
   {
-    register_setting('wpp_settings', 'wpp_enabled');
-    register_setting('wpp_settings', 'wpp_fee_amount');
-    register_setting('wpp_settings', 'wpp_checkbox_label');
-    register_setting('wpp_settings', 'wpp_description');
-    register_setting('wpp_settings', 'wpp_fee_label');
-    register_setting('wpp_settings', 'wpp_section_title');
-    register_setting('wpp_settings', 'wpp_allowed_user_roles', [
-      'sanitize_callback' => [$this, 'sanitize_user_roles']
-    ]);
-    register_setting('wpp_settings', 'wpp_allow_guests');
+    register_setting( 'wpp_settings', 'wpp_enabled', [
+      'sanitize_callback' => fn( $v ) => $v === '1' ? '1' : '0',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_fee_amount', [
+      'sanitize_callback' => fn( $v ) => (string) max( 0, round( (float) $v, 2 ) ),
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_checkbox_label', [
+      'sanitize_callback' => 'sanitize_text_field',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_description', [
+      'sanitize_callback' => 'sanitize_textarea_field',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_fee_label', [
+      'sanitize_callback' => 'sanitize_text_field',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_section_title', [
+      'sanitize_callback' => 'sanitize_text_field',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_allowed_user_roles', [
+      'sanitize_callback' => [ $this, 'sanitize_user_roles' ],
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_allow_guests', [
+      'sanitize_callback' => fn( $v ) => $v === '1' ? '1' : '0',
+    ] );
   }
 
   /**

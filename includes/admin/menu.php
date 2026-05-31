@@ -1,177 +1,148 @@
 <?php
-
 /**
  * Admin Menu Handler
- * Manages admin menu registration and basic admin setup
+ * Manages admin menu registration and asset enqueuing
+ *
+ * @package WooCommerce_Priority_Processing
+ * @since 1.0.0
  */
-class Admin_Menu
-{
-  private $statistics;
 
-  public function __construct($statistics_instance)
-  {
-    $this->statistics = $statistics_instance;
+declare(strict_types=1);
 
-    // Always add the admin menu as primary approach
-    add_action('admin_menu', [$this, 'add_admin_menu']);
-    add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
+/**
+ * Admin Menu Class
+ *
+ * @since 1.0.0
+ */
+class Admin_Menu {
 
-    // Add settings link to plugins page
-    add_filter('plugin_action_links_' . plugin_basename(WPP_PLUGIN_DIR . 'woocommerce-priority-processing.php'), [$this, 'add_plugin_action_links']);
+	private readonly Core_Statistics $statistics;
+	private readonly Admin_Dashboard $dashboard;
 
-    // Add plugin metadata links
-    add_filter('plugin_row_meta', [$this, 'add_plugin_row_meta'], 10, 2);
+	public function __construct( Core_Statistics $statistics_instance, Admin_Dashboard $dashboard ) {
+		$this->statistics = $statistics_instance;
+		$this->dashboard  = $dashboard;
 
-    // Try WooCommerce integration as secondary approach
-    add_action('woocommerce_loaded', [$this, 'try_woocommerce_integration']);
-  }
+		add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
 
-  /**
-   * Add settings link to plugins page
-   */
-  public function add_plugin_action_links($links)
-  {
-    $plugin_links = [];
+		add_filter(
+			'plugin_action_links_' . plugin_basename( WPP_PLUGIN_DIR . 'woocommerce-priority-processing.php' ),
+			[ $this, 'add_plugin_action_links' ]
+		);
+		add_filter( 'plugin_row_meta', [ $this, 'add_plugin_row_meta' ], 10, 2 );
+	}
 
-    // Settings link
-    $plugin_links['settings'] = sprintf(
-      '<a href="%s" style="color: #2271b1; font-weight: 600;">%s</a>',
-      admin_url('admin.php?page=woo-priority-processing'),
-      __('Settings', 'woo-priority')
-    );
+	/**
+	 * Add Settings / Docs / Support links to the plugins list page
+	 *
+	 * @param array<string, string> $links
+	 * @return array<string, string>
+	 */
+	public function add_plugin_action_links( array $links ): array {
+		$plugin_links = [
+			'settings' => sprintf(
+				'<a href="%s" style="color:#2271b1;font-weight:600;">%s</a>',
+				admin_url( 'admin.php?page=woo-priority-processing' ),
+				__( 'Settings', 'woo-priority' )
+			),
+			'docs'     => sprintf(
+				'<a href="%s" target="_blank" style="color:#50575e;">%s</a>',
+				'https://openwpclub.com/docs/woocommerce-priority-processing/',
+				__( 'Docs', 'woo-priority' )
+			),
+			'support'  => sprintf(
+				'<a href="%s" target="_blank" style="color:#50575e;">%s</a>',
+				'https://openwpclub.com/support/',
+				__( 'Support', 'woo-priority' )
+			),
+		];
 
-    // Documentation link (if you have documentation)
-    $plugin_links['docs'] = sprintf(
-      '<a href="%s" target="_blank" style="color: #50575e;">%s</a>',
-      'https://openwpclub.com/docs/woocommerce-priority-processing/',
-      __('Docs', 'woo-priority')
-    );
+		return array_merge( $plugin_links, $links );
+	}
 
-    // Support link 
-    $plugin_links['support'] = sprintf(
-      '<a href="%s" target="_blank" style="color: #50575e;">%s</a>',
-      'https://openwpclub.com/support/',
-      __('Support', 'woo-priority')
-    );
+	/**
+	 * Add GitHub link to plugin row meta
+	 *
+	 * @param array<int, string> $links
+	 * @param string             $file
+	 * @return array<int, string>
+	 */
+	public function add_plugin_row_meta( array $links, string $file ): array {
+		if ( $file === plugin_basename( WPP_PLUGIN_DIR . 'woocommerce-priority-processing.php' ) ) {
+			$links[] = sprintf(
+				'<a href="%s" target="_blank" style="color:#50575e;">%s</a>',
+				'https://github.com/openwpclub/woocommerce-priority-processing',
+				__( 'GitHub', 'woo-priority' )
+			);
+		}
+		return $links;
+	}
 
-    // Merge with existing links (Settings first, then others, then existing links)
-    return array_merge($plugin_links, $links);
-  }
+	/**
+	 * Register WooCommerce → Priority Processing submenu page
+	 */
+	public function add_admin_menu(): void {
+		add_submenu_page(
+			'woocommerce',
+			__( 'Priority Processing', 'woo-priority' ),
+			__( 'Priority Processing', 'woo-priority' ),
+			'manage_woocommerce',
+			'woo-priority-processing',
+			[ $this, 'admin_page' ]
+		);
+	}
 
-  /**
-   * Add plugin metadata links (in plugin description area)
-   */
-  public function add_plugin_row_meta($links, $file)
-  {
-    $plugin_basename = plugin_basename(WPP_PLUGIN_DIR . 'woocommerce-priority-processing.php');
+	/**
+	 * Render admin page (uses the shared Admin_Dashboard instance)
+	 */
+	public function admin_page(): void {
+		$this->dashboard->display_page();
+	}
 
-    if ($file === $plugin_basename) {
-      $meta_links = [];
+	/**
+	 * Enqueue admin CSS + JS on our settings page
+	 *
+	 * @param string $hook Current admin page hook.
+	 */
+	public function admin_scripts( string $hook ): void {
+		if ( $hook !== 'woocommerce_page_woo-priority-processing' ) {
+			return;
+		}
 
-      // GitHub/Source link (if applicable)
-      $meta_links[] = sprintf(
-        '<a href="%s" target="_blank" style="color: #50575e;">%s</a>',
-        'https://github.com/openwpclub/woocommerce-priority-processing',
-        __('GitHub', 'woo-priority')
-      );
+		wp_enqueue_style( 'wpp-admin', WPP_PLUGIN_URL . 'assets/css/admin.css', [], WPP_VERSION );
 
-      $links = array_merge($links, $meta_links);
-    }
+		wp_enqueue_script(
+			'wpp-admin-js',
+			WPP_PLUGIN_URL . 'assets/js/admin.js',
+			[ 'jquery' ],
+			WPP_VERSION,
+			true
+		);
 
-    return $links;
-  }
+		wp_localize_script( 'wpp-admin-js', 'wpp_admin_ajax', [
+			'ajax_url'          => admin_url( 'admin-ajax.php' ),
+			'nonce'             => wp_create_nonce( 'wpp_admin_nonce' ),
+			'refreshing_text'   => __( 'Refreshing…', 'woo-priority' ),
+			'refresh_text'      => __( 'Refresh Stats', 'woo-priority' ),
+			'error_refresh'     => __( 'Failed to refresh statistics. Please try again.', 'woo-priority' ),
+			'text_active'       => __( 'Active', 'woo-priority' ),
+			'text_inactive'     => __( 'Inactive', 'woo-priority' ),
+			'text_allowed'      => __( 'Allowed', 'woo-priority' ),
+			'text_denied'       => __( 'Denied', 'woo-priority' ),
+			'text_shop_managers'  => __( 'Shop Managers & Administrators', 'woo-priority' ),
+			'text_guests'         => __( 'Guest Users', 'woo-priority' ),
+			'text_available_to'   => __( 'Priority processing is available to:', 'woo-priority' ),
+			'text_only_managers'  => __( 'Only Shop Managers currently have access to priority processing', 'woo-priority' ),
+			'text_available'      => __( 'Available to:', 'woo-priority' ),
+			'text_no_access'      => __( 'No access granted', 'woo-priority' ),
+		] );
+	}
 
-  /**
-   * Try to integrate with WooCommerce settings if possible
-   */
-  public function try_woocommerce_integration()
-  {
-    // Only try if WC_Settings_Page exists and we haven't already integrated
-    if (class_exists('WC_Settings_Page') && !get_transient('wpp_wc_integration_attempted')) {
-      add_filter('woocommerce_get_settings_pages', [$this, 'add_woocommerce_settings_page']);
-      set_transient('wpp_wc_integration_attempted', true, HOUR_IN_SECONDS);
-      wpp_log( 'WooCommerce settings integration attempted' );
-    }
-  }
-
-  /**
-   * Add WooCommerce settings page integration
-   */
-  public function add_woocommerce_settings_page($settings)
-  {
-    // Include and create the settings page class
-    if (!class_exists('WC_Settings_Priority_Processing')) {
-      $settings_file = WPP_PLUGIN_DIR . 'includes/admin/wc-settings.php';
-      if (file_exists($settings_file)) {
-        include_once $settings_file;
-      }
-    }
-
-    if (class_exists('WC_Settings_Priority_Processing')) {
-      $settings[] = new WC_Settings_Priority_Processing();
-      wpp_log( 'Added WooCommerce settings page' );
-    }
-
-    return $settings;
-  }
-
-  /**
-   * Add admin menu page
-   */
-  public function add_admin_menu()
-  {
-    // Always add as WooCommerce submenu - this is reliable
-    add_submenu_page(
-      'woocommerce',
-      __('Priority Processing', 'woo-priority'),
-      __('Priority Processing', 'woo-priority'),
-      'manage_woocommerce',
-      'woo-priority-processing',
-      [$this, 'admin_page']
-    );
-  }
-
-  /**
-   * Display admin page - delegates to dashboard class
-   */
-  public function admin_page()
-  {
-    // Create dashboard instance and display
-    $dashboard = new Admin_Dashboard($this->statistics);
-    $dashboard->display_page();
-  }
-
-  /**
-   * Enqueue admin scripts and styles
-   */
-  public function admin_scripts($hook)
-  {
-    // Load styles on our admin page
-    if ($hook === 'woocommerce_page_woo-priority-processing') {
-      wp_enqueue_style('wpp-admin', WPP_PLUGIN_URL . 'assets/css/admin.css', [], WPP_VERSION);
-      wp_enqueue_script('jquery');
-
-      // Localize script for AJAX
-      wp_localize_script('jquery', 'wpp_admin_ajax', [
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('wpp_admin_nonce'),
-        'refreshing_text' => __('Refreshing...', 'woo-priority'),
-        'refresh_text' => __('Refresh Stats', 'woo-priority')
-      ]);
-    }
-
-    // Also load on WooCommerce settings page if our tab is active
-    if ($hook === 'woocommerce_page_wc-settings' && isset($_GET['tab']) && $_GET['tab'] === 'wpp_priority') {
-      wp_enqueue_style('wpp-admin', WPP_PLUGIN_URL . 'assets/css/admin.css', [], WPP_VERSION);
-      wp_enqueue_script('jquery');
-    }
-  }
-
-  /**
-   * Get the statistics handler instance
-   */
-  public function get_statistics_handler()
-  {
-    return $this->statistics;
-  }
+	/**
+	 * @deprecated kept for back-compat if called externally
+	 */
+	public function get_statistics_handler(): Core_Statistics {
+		return $this->statistics;
+	}
 }

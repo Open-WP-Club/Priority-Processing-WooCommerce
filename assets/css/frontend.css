@@ -1,124 +1,133 @@
 /**
  * Priority Processing - Frontend Styles
- * Simplified version that will definitely load
+ * Uses ID selector (#wpp-priority-section) and double-class selectors
+ * for sufficient specificity without !important.
  */
 
-/* Main Priority Section */
-.wpp-priority-section {
-  background: #f8f9fa !important;
-  border: 2px solid #dee2e6 !important;
-  border-radius: 6px !important;
-  padding: 20px !important;
-  margin: 20px 0 !important;
-  box-sizing: border-box !important;
+/* ── Classic checkout (ID gives high specificity) ─────────────────────────── */
+#wpp-priority-section {
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  padding: 20px;
+  margin: 20px 0;
+  box-sizing: border-box;
 }
 
-.wpp-priority-section:hover {
-  border-color: #28a745 !important;
-  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.1) !important;
+#wpp-priority-section:hover {
+  border-color: #28a745;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.1);
 }
 
-/* Section Title with Lightning Emoji */
-.wpp-priority-section h3 {
-  margin: 0 0 15px 0 !important;
-  color: #495057 !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
+#wpp-priority-section h3 {
+  margin: 0 0 15px 0;
+  color: #495057;
+  font-size: 16px;
+  font-weight: 600;
 }
 
-/* Field Wrapper */
-.wpp-priority-field-wrapper {
-  margin: 0 !important;
-  padding: 0 !important;
+#wpp-priority-section .wpp-priority-field-wrapper {
+  margin: 0;
+  padding: 0;
 }
 
-/* Label Container */
-.wpp-priority-label {
-  display: flex !important;
-  align-items: flex-start !important;
-  gap: 10px !important;
-  cursor: pointer !important;
-  margin: 0 !important;
+#wpp-priority-section .wpp-priority-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  margin: 0;
 }
 
-/* Checkbox */
-.wpp-priority-checkbox {
-  margin: 2px 0 0 0 !important;
-  cursor: pointer !important;
-  flex-shrink: 0 !important;
-  width: 18px !important;
-  height: 18px !important;
+#wpp-priority-section .wpp-priority-checkbox {
+  margin: 2px 0 0 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
 }
 
-/* Label Content */
-.wpp-label-content {
-  flex: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 5px !important;
+#wpp-priority-section .wpp-label-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.wpp-label-content strong {
-  color: #28a745 !important;
-  font-weight: 600 !important;
-  display: block !important;
-  font-size: 14px !important;
+#wpp-priority-section .wpp-label-content strong {
+  color: #28a745;
+  font-weight: 600;
+  display: block;
+  font-size: 14px;
 }
 
-/* Price in Strong */
-.wpp-price {
-  color: #dc3545 !important;
-  font-weight: 600 !important;
-  margin-left: 5px !important;
+#wpp-priority-section .wpp-price {
+  color: #dc3545;
+  font-weight: 600;
+  margin-left: 5px;
 }
 
-/* Description */
-.wpp-label-content .description {
-  color: #6c757d !important;
-  font-size: 13px !important;
-  line-height: 1.4 !important;
-  margin: 0 !important;
-  display: block !important;
+#wpp-priority-section .wpp-label-content .description {
+  color: #6c757d;
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+  display: block;
 }
 
-/* Checked State */
-.wpp-priority-checkbox:checked+.wpp-label-content strong {
-  color: #155724 !important;
+#wpp-priority-section .wpp-priority-checkbox:checked + .wpp-label-content strong {
+  color: #155724;
 }
 
-/* Loading State */
+#wpp-priority-section .wpp-priority-checkbox:focus {
+  outline: 2px solid #28a745;
+  outline-offset: 2px;
+}
+
+/* ── Blocks checkout (double class gives specificity without ID) ───────────── */
+.wc-block-components-checkout-step.wpp-priority-section {
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  padding: 20px;
+  margin: 20px 0;
+  box-sizing: border-box;
+}
+
+.wc-block-components-checkout-step.wpp-priority-section:hover {
+  border-color: #28a745;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.1);
+}
+
+/* ── Processing / loading state ───────────────────────────────────────────── */
+.processing #wpp-priority-section,
 .processing .wpp-priority-section {
-  opacity: 0.6 !important;
-  pointer-events: none !important;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
-/* Mobile Responsive */
+/* ── Mobile ───────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .wpp-priority-section {
-    padding: 15px !important;
-    margin: 15px 0 !important;
+  #wpp-priority-section,
+  .wc-block-components-checkout-step.wpp-priority-section {
+    padding: 15px;
+    margin: 15px 0;
   }
 
-  .wpp-priority-section h3 {
-    font-size: 14px !important;
+  #wpp-priority-section h3 {
+    font-size: 14px;
   }
 
-  .wpp-label-content strong {
-    font-size: 13px !important;
+  #wpp-priority-section .wpp-label-content strong {
+    font-size: 13px;
   }
 
-  .wpp-label-content .description {
-    font-size: 12px !important;
+  #wpp-priority-section .wpp-label-content .description {
+    font-size: 12px;
   }
 }
 
-/* Focus for Accessibility */
-.wpp-priority-checkbox:focus {
-  outline: 2px solid #28a745 !important;
-  outline-offset: 2px !important;
-}
-
-/* Hide any WooCommerce auto-generated field */
+/* Hide WooCommerce auto-generated duplicate field if present */
 .wpp-priority-field-hidden {
-  display: none !important;
+  display: none;
 }

@@ -2,17 +2,17 @@
 /**
  * Plugin Name: WooCommerce Priority Processing
  * Description: Add priority processing and express shipping option at checkout
- * Version: 1.4.4
+ * Version: 1.5.0
  * Author: OpenWPClub.com
  * Author URI: https://openwpclub.com
  * License: GPL v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: woo-priority
  * Domain Path: /languages
- * Requires at least: 6.4
- * Requires PHP: 7.4
- * WC requires at least: 8.0
- * WC tested up to: 9.5
+ * Requires at least: 6.5
+ * Requires PHP: 8.1
+ * WC requires at least: 9.0
+ * WC tested up to: 9.9
  * Requires Plugins: woocommerce
  *
  * @package WooCommerce_Priority_Processing
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants.
-define( 'WPP_VERSION', '1.4.4' );
+define( 'WPP_VERSION', '1.5.0' );
 define( 'WPP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -69,6 +69,13 @@ class WooCommerce_Priority_Processing {
 	 * @var WooCommerce_Priority_Processing|null
 	 */
 	private static ?WooCommerce_Priority_Processing $instance = null;
+
+	/**
+	 * REST API controller instance
+	 *
+	 * @var WPP_REST_Controller|null
+	 */
+	public ?WPP_REST_Controller $wpp_api = null;
 
 	/**
 	 * Admin menu instance
@@ -208,6 +215,9 @@ class WooCommerce_Priority_Processing {
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/fees.php';
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/shipping.php';
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/blocks-integration.php';
+
+		// Include API files.
+		require_once WPP_PLUGIN_DIR . 'includes/api/rest-controller.php';
 	}
 
 	/**
@@ -222,9 +232,9 @@ class WooCommerce_Priority_Processing {
 		$this->core_orders     = new Core_Orders();
 
 		// Initialize admin components.
-		$this->admin_menu      = new Admin_Menu( $this->core_statistics );
 		$this->admin_settings  = new Admin_Settings();
-		$this->admin_dashboard = new Admin_Dashboard( $this->core_statistics );
+		$this->admin_dashboard = new Admin_Dashboard( $this->core_statistics, $this->admin_settings );
+		$this->admin_menu      = new Admin_Menu( $this->core_statistics, $this->admin_dashboard );
 
 		// Initialize frontend components.
 		$this->frontend_checkout = new Frontend_Checkout();
@@ -232,6 +242,7 @@ class WooCommerce_Priority_Processing {
 		$this->frontend_fees     = new Frontend_Fees();
 		$this->frontend_shipping = new Frontend_Shipping();
 		$this->frontend_blocks   = new Frontend_Blocks_Integration();
+		$this->wpp_api           = new WPP_REST_Controller();
 
 		// Register settings and defaults.
 		add_action( 'admin_init', array( $this, 'register_default_settings' ) );

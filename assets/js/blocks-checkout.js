@@ -5,17 +5,19 @@
 (function() {
   'use strict';
 
-  // Wait for WooCommerce Blocks to be ready
-  const initializeWhenReady = () => {
+  // Wait for WooCommerce Blocks to be ready (max 20 attempts = ~10 s)
+  const initializeWhenReady = (attempts = 0) => {
     const { registerCheckoutBlock } = window.wc?.blocksCheckout || {};
     const { CheckboxControl } = window.wp?.components || {};
     const { createElement, useState, useEffect } = window.wp?.element || {};
     const { __ } = window.wp?.i18n || {};
 
-    // If dependencies aren't ready, wait and try again
     if (!registerCheckoutBlock || !CheckboxControl || !createElement) {
-      console.log('WPP: Waiting for WooCommerce Blocks dependencies...');
-      setTimeout(initializeWhenReady, 500);
+      if (attempts >= 20) {
+        console.warn('WPP: Blocks dependencies did not load after 10 seconds — aborting.');
+        return;
+      }
+      setTimeout(() => initializeWhenReady(attempts + 1), 500);
       return;
     }
 
@@ -191,10 +193,9 @@
     }
   };
 
-  // Initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeWhenReady);
+    document.addEventListener('DOMContentLoaded', () => initializeWhenReady(0));
   } else {
-    initializeWhenReady();
+    initializeWhenReady(0);
   }
 })();

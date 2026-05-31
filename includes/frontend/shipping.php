@@ -413,21 +413,14 @@ class Frontend_Shipping {
 	 * @return bool True if integration is active
 	 */
 	private function is_integration_active( string $integration_type ): bool {
-		// This could be expanded to check for specific plugin activations.
-		switch ( $integration_type ) {
-			case 'fedex':
-				return class_exists( 'WC_Shipping_Fedex' ) || has_filter( 'woocommerce_fedex_api_request' );
-			case 'ups':
-				return class_exists( 'WC_Shipping_UPS' ) || has_filter( 'woocommerce_ups_api_request' );
-			case 'usps':
-				return class_exists( 'WC_Shipping_USPS' ) || has_filter( 'woocommerce_usps_api_request' );
-			case 'dhl':
-				return class_exists( 'WC_Shipping_DHL' ) || has_filter( 'woocommerce_dhl_api_request' );
-			case 'generic':
-				return true; // Generic hooks are always available.
-			default:
-				return false;
-		}
+		return match ( $integration_type ) {
+			'fedex'   => class_exists( 'WC_Shipping_Fedex' ) || has_filter( 'woocommerce_fedex_api_request' ),
+			'ups'     => class_exists( 'WC_Shipping_UPS' )   || has_filter( 'woocommerce_ups_api_request' ),
+			'usps'    => class_exists( 'WC_Shipping_USPS' )  || has_filter( 'woocommerce_usps_api_request' ),
+			'dhl'     => class_exists( 'WC_Shipping_DHL' )   || has_filter( 'woocommerce_dhl_api_request' ),
+			'generic' => true,
+			default   => false,
+		};
 	}
 
 	/**

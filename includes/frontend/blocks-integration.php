@@ -116,7 +116,7 @@ class Frontend_Blocks_Integration {
 	 * @return array<string, mixed> Priority processing configuration
 	 */
 	private function get_priority_data(): array {
-		$is_enabled = get_option( 'wpp_enabled' ) === 'yes' || get_option( 'wpp_enabled' ) === '1';
+		$is_enabled = get_option( 'wpp_enabled' ) === '1';
 		$can_access = Core_Permissions::can_access_priority_processing();
 		$is_active  = Core_Permissions::is_priority_active();
 
@@ -226,7 +226,7 @@ class Frontend_Blocks_Integration {
 		}
 
 		// Check if feature is enabled.
-		if ( get_option( 'wpp_enabled' ) !== 'yes' && get_option( 'wpp_enabled' ) !== '1' ) {
+		if ( get_option( 'wpp_enabled' ) !== '1' ) {
 			return;
 		}
 

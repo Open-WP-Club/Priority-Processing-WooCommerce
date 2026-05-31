@@ -97,7 +97,7 @@ class Frontend_Checkout {
    */
   private function should_display_field() {
     // Check if feature is enabled
-    if (get_option('wpp_enabled') !== 'yes' && get_option('wpp_enabled') !== '1') {
+    if ( get_option( 'wpp_enabled' ) !== '1' ) {
       return false;
     }
 

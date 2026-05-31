@@ -9,10 +9,9 @@ class Admin_Dashboard
   private $statistics;
   private $settings_handler;
 
-  public function __construct($statistics_instance)
-  {
-    $this->statistics = $statistics_instance;
-    $this->settings_handler = new Admin_Settings();
+  public function __construct( $statistics_instance, Admin_Settings $settings_handler ) {
+    $this->statistics       = $statistics_instance;
+    $this->settings_handler = $settings_handler;
   }
 
   /**
@@ -20,16 +19,13 @@ class Admin_Dashboard
    */
   public function display_page()
   {
-    // Get current settings and statistics
-    $settings = $this->settings_handler->get_settings();
-    $stats = $this->statistics->get_statistics();
+    $settings   = $this->settings_handler->get_settings();
+    $stats      = $this->statistics->get_statistics();
     $cache_info = $this->statistics->get_cache_info();
 
-    // Display the complete admin page
     $this->render_page_header();
     $this->render_statistics_section($stats, $cache_info);
     $this->render_settings_section($settings);
-    $this->render_page_scripts();
   }
 
   /**
@@ -184,186 +180,4 @@ class Admin_Dashboard
   <?php
   }
 
-  /**
-   * Render JavaScript for the admin page
-   */
-  private function render_page_scripts()
-  {
-  ?>
-    <script>
-      jQuery(document).ready(function($) {
-        // Live preview updates
-        function updatePreview() {
-          var sectionTitle = $('#wpp_section_title').val() || 'Express Options';
-          var checkboxLabel = $('#wpp_checkbox_label').val() || 'Priority processing + Express shipping';
-          var description = $('#wpp_description').val() || '';
-          var feeAmount = $('#wpp_fee_amount').val() || '0.00';
-          var enabled = $('#wpp_enabled').is(':checked');
-
-          $('#preview-section-title').text(sectionTitle);
-          $('#preview-checkbox-label').text(checkboxLabel);
-          $('#preview-fee-amount').text(feeAmount);
-
-          if (description) {
-            $('#preview-description').text(description).show();
-          } else {
-            $('#preview-description').hide();
-          }
-
-          // Update preview styling based on enabled state
-          var $preview = $('#checkout-preview');
-          var $checkbox = $preview.find('input[type="checkbox"]');
-
-          if (enabled) {
-            $preview.css('opacity', '1');
-            $checkbox.css('opacity', '1');
-          } else {
-            $preview.css('opacity', '0.6');
-            $checkbox.css('opacity', '0.5');
-          }
-
-          // Update status indicator
-          var $status = $('.wpp-status');
-          if (enabled) {
-            $status.removeClass('wpp-status-disabled').addClass('wpp-status-enabled').text('Active');
-          } else {
-            $status.removeClass('wpp-status-enabled').addClass('wpp-status-disabled').text('Inactive');
-          }
-
-          // Update stats - only show numbers
-          $('.wpp-stat-value').first().text(feeAmount);
-          $('.wpp-stat-value').last().text(enabled ? '✅' : '❌');
-        }
-
-        // Permission settings handlers
-        function updatePermissionSummary() {
-          var selectedRoles = [];
-          var allowGuests = $('#wpp_allow_guests').is(':checked');
-
-          // Always include shop managers
-          selectedRoles.push('Shop Managers');
-
-          // Get selected user roles
-          $('input[name="wpp_allowed_user_roles[]"]:checked').each(function() {
-            var roleLabel = $(this).parent().find('strong').text();
-            selectedRoles.push(roleLabel);
-          });
-
-          // Add guests if allowed
-          if (allowGuests) {
-            selectedRoles.push('Guest Users');
-          }
-
-          // Update summary display
-          var $summary = $('#wpp-permission-summary');
-          if (selectedRoles.length > 1) { // More than just shop managers
-            var summaryHtml = '<div style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 10px; border-radius: 4px;">' +
-              '<strong>Priority processing is available to:</strong>' +
-              '<ul style="margin: 5px 0 0 20px;">';
-
-            selectedRoles.forEach(function(role) {
-              summaryHtml += '<li>' + role + '</li>';
-            });
-
-            summaryHtml += '</ul></div>';
-            $summary.html(summaryHtml);
-          } else {
-            $summary.html('<div style="background: #fff2e5; border: 1px solid #ffcc99; padding: 10px; border-radius: 4px;">' +
-              '<strong>Only Shop Managers currently have access to priority processing</strong></div>');
-          }
-
-          // Update guest status text
-          $('.wpp-guest-status').text(allowGuests ? 'Allowed' : 'Denied');
-
-          // Update preview permission summary
-          $('#preview-permission-summary').html(
-            selectedRoles.length > 1 ?
-            '<strong>Available to:</strong> ' + selectedRoles.join(', ') :
-            '<strong>No access granted</strong>'
-          );
-        }
-
-        // Bind permission change events
-        $('input[name="wpp_allowed_user_roles[]"], #wpp_allow_guests').on('change', function() {
-          updatePermissionSummary();
-          updatePreview();
-        });
-
-        // Bind events for live preview
-        $('#wpp_section_title, #wpp_checkbox_label, #wpp_description, #wpp_fee_amount').on('input', updatePreview);
-        $('#wpp_enabled').on('change', updatePreview);
-
-        // Initialize on page load
-        setTimeout(function() {
-          updatePreview();
-          updatePermissionSummary();
-        }, 100);
-
-        // Statistics refresh handler
-        $('#wpp-refresh-stats').on('click', function(e) {
-          e.preventDefault();
-
-          var $button = $(this);
-          var originalText = $button.html();
-
-          // Show loading state
-          $button.prop('disabled', true);
-          $button.html('<span class="dashicons dashicons-update spin"></span> ' + wpp_admin_ajax.refreshing_text);
-
-          // Add loading class to statistics container
-          $('#wpp-statistics-container').addClass('wpp-loading');
-
-          $.ajax({
-            url: wpp_admin_ajax.ajax_url,
-            type: 'POST',
-            data: {
-              action: 'wpp_refresh_stats',
-              nonce: wpp_admin_ajax.nonce
-            },
-            success: function(response) {
-              if (response.success && response.data.formatted) {
-                // Update all statistics with formatted values
-                $('#stat-total-orders').text(response.data.formatted.total_priority_orders);
-                $('#stat-total-revenue').html(response.data.formatted.total_priority_revenue);
-                $('#stat-percentage').text(response.data.formatted.priority_percentage);
-                $('#stat-avg-fee').html(response.data.formatted.average_priority_fee);
-                $('#stat-today').text(response.data.formatted.today_priority_orders);
-                $('#stat-this-week').text(response.data.formatted.this_week_priority_orders);
-                $('#stat-this-month').text(response.data.formatted.this_month_priority_orders);
-
-                // Update last updated time
-                var now = new Date();
-                var timeString = now.getHours().toString().padStart(2, '0') + ':' +
-                  now.getMinutes().toString().padStart(2, '0');
-                $('#stat-last-updated').text(timeString);
-
-                // Show success feedback
-                $('#wpp-statistics-container').addClass('wpp-updated');
-                setTimeout(function() {
-                  $('#wpp-statistics-container').removeClass('wpp-updated');
-                }, 2000);
-
-                if (response.data.message) {
-                  console.log('WPP: ' + response.data.message);
-                }
-              } else {
-                alert('Failed to refresh statistics. Please try again.');
-              }
-            },
-            error: function(xhr, status, error) {
-              console.error('Statistics refresh error:', error);
-              alert('Error refreshing statistics: ' + error);
-            },
-            complete: function() {
-              // Reset button state
-              $button.prop('disabled', false);
-              $button.html(originalText);
-              $('#wpp-statistics-container').removeClass('wpp-loading');
-            }
-          });
-        });
-      });
-    </script>
-<?php
-  }
 }
