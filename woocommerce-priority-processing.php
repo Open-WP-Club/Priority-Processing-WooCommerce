@@ -39,9 +39,11 @@ define( 'WPP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
  * @param string $message Message to log.
  * @return void
  */
-function wpp_log( string $message ): void {
-	if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
-		error_log( 'WPP: ' . $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+if ( ! function_exists( 'wpp_log' ) ) {
+	function wpp_log( string $message ): void {
+		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+			error_log( 'WPP: ' . $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
 	}
 }
 
