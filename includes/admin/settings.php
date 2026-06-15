@@ -292,11 +292,11 @@ class Admin_Settings
 
       <div class="wpp-quick-stats">
         <div class="wpp-stat-item">
-          <span class="wpp-stat-value"><?php echo esc_html($settings['fee_amount']); ?></span>
+          <span class="wpp-preview-stat-value"><?php echo esc_html($settings['fee_amount']); ?></span>
           <span class="wpp-stat-label"><?php _e('Current Fee', 'woo-priority'); ?></span>
         </div>
         <div class="wpp-stat-item">
-          <span class="wpp-stat-value"><?php echo ($settings['enabled'] === '1') ? '✅' : '❌'; ?></span>
+          <span class="wpp-preview-stat-value"><?php echo ($settings['enabled'] === '1') ? '✅' : '❌'; ?></span>
           <span class="wpp-stat-label"><?php _e('Status', 'woo-priority'); ?></span>
         </div>
       </div>
@@ -323,7 +323,7 @@ class Admin_Settings
           <?php
           $summary = Core_Permissions::get_permission_summary();
           if (!empty($summary)) {
-            echo '<strong>Available to:</strong> ' . implode(', ', $summary);
+            echo '<strong>' . esc_html__( 'Available to:', 'woo-priority' ) . '</strong> ' . implode( ', ', array_map( 'esc_html', $summary ) );
           } else {
             echo '<strong>No access granted</strong>';
           }

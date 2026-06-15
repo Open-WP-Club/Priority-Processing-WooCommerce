@@ -36,8 +36,8 @@ jQuery(document).ready(function($) {
       $status.removeClass('wpp-status-enabled').addClass('wpp-status-disabled').text(wpp_admin_ajax.text_inactive);
     }
 
-    $('.wpp-stat-value').first().text(feeAmount);
-    $('.wpp-stat-value').eq(1).text(enabled ? '✅' : '❌');
+    $('.wpp-preview-stat-value').first().text(feeAmount);
+    $('.wpp-preview-stat-value').eq(1).text(enabled ? '✅' : '❌');
   }
 
   function updatePermissionSummary() {

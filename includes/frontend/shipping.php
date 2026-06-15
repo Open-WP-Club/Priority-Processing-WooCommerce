@@ -61,13 +61,10 @@ class Frontend_Shipping {
 		// Check if priority processing checkbox is checked in the posted data.
 		$priority_enabled = false;
 
+		// WooCommerce verifies nonce via check_ajax_referer() before firing this hook,
+		// so $posted_data (parsed from the hook argument) is the authoritative source.
 		if ( isset( $posted_data['priority_processing'] ) && $posted_data['priority_processing'] === '1' ) {
 			$priority_enabled = true;
-		} elseif ( isset( $_POST['priority_processing'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$priority_processing = sanitize_text_field( wp_unslash( $_POST['priority_processing'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( $priority_processing === '1' ) {
-				$priority_enabled = true;
-			}
 		}
 
 		// Update session BEFORE shipping is calculated.
@@ -379,51 +376,6 @@ class Frontend_Shipping {
 	}
 
 	/**
-	 * Get shipping integration status
-	 *
-	 * @since 1.0.0
-	 * @return array<string, array<string, mixed>> Integration status information
-	 */
-	public function get_integration_status(): array {
-		$active_integrations    = array();
-		$available_integrations = array(
-			'fedex'   => 'FedEx',
-			'ups'     => 'UPS',
-			'usps'    => 'USPS',
-			'dhl'     => 'DHL',
-			'generic' => 'Generic Shipping Calculators',
-		);
-
-		foreach ( $available_integrations as $key => $name ) {
-			$active_integrations[ $key ] = array(
-				'name'             => $name,
-				'active'           => $this->is_integration_active( $key ),
-				'priority_enabled' => Core_Permissions::is_priority_active(),
-			);
-		}
-
-		return $active_integrations;
-	}
-
-	/**
-	 * Check if specific shipping integration is active
-	 *
-	 * @since 1.0.0
-	 * @param string $integration_type Type of shipping integration.
-	 * @return bool True if integration is active
-	 */
-	private function is_integration_active( string $integration_type ): bool {
-		return match ( $integration_type ) {
-			'fedex'   => class_exists( 'WC_Shipping_Fedex' ) || has_filter( 'woocommerce_fedex_api_request' ),
-			'ups'     => class_exists( 'WC_Shipping_UPS' )   || has_filter( 'woocommerce_ups_api_request' ),
-			'usps'    => class_exists( 'WC_Shipping_USPS' )  || has_filter( 'woocommerce_usps_api_request' ),
-			'dhl'     => class_exists( 'WC_Shipping_DHL' )   || has_filter( 'woocommerce_dhl_api_request' ),
-			'generic' => true,
-			default   => false,
-		};
-	}
-
-	/**
 	 * Get priority fee for shipping calculations
 	 *
 	 * @since 1.0.0
@@ -431,21 +383,6 @@ class Frontend_Shipping {
 	 */
 	public function get_priority_fee(): float {
 		return floatval( get_option( 'wpp_fee_amount', '5.00' ) );
-	}
-
-	/**
-	 * Get shipping metadata for priority orders
-	 *
-	 * @since 1.0.0
-	 * @return array<string, mixed> Shipping metadata
-	 */
-	public function get_priority_shipping_metadata(): array {
-		return array(
-			'service_level'                => 'express',
-			'requires_priority_handling'   => true,
-			'fee_amount'                   => $this->get_priority_fee(),
-			'declared_value_adjustment'    => $this->get_priority_fee(),
-		);
 	}
 
 	/**

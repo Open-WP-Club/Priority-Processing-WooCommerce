@@ -8,8 +8,6 @@
       "Glob(**)"
     ],
     "deny": [
-      "Bash(git *:*/.git/*)",
-      "Bash(rm -rf:*/.git/*)",
       "Read(**/.git/*)",
       "Write(**/.git/*)",
       "Edit(**/.git/*)"
