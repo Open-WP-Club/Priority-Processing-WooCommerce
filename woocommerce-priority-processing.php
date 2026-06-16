@@ -27,10 +27,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants.
-define( 'WPP_VERSION', '1.5.0' );
-define( 'WPP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WPP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'WPP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+if ( ! defined( 'WPP_VERSION' ) ) {
+	define( 'WPP_VERSION', '1.5.0' );
+}
+if ( ! defined( 'WPP_PLUGIN_DIR' ) ) {
+	define( 'WPP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+if ( ! defined( 'WPP_PLUGIN_URL' ) ) {
+	define( 'WPP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+}
+if ( ! defined( 'WPP_PLUGIN_BASENAME' ) ) {
+	define( 'WPP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+}
 
 /**
  * Log message only when WP_DEBUG_LOG is enabled
@@ -63,6 +71,7 @@ add_action(
  *
  * @since 1.0.0
  */
+if ( ! class_exists( 'WooCommerce_Priority_Processing' ) ) :
 class WooCommerce_Priority_Processing {
 
 	/**
@@ -396,6 +405,7 @@ class WooCommerce_Priority_Processing {
 		return $this->core_orders;
 	}
 }
+endif;
 
 // Initialize plugin after all plugins are loaded.
 add_action(
