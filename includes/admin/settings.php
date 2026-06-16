@@ -47,6 +47,22 @@ class Admin_Settings
     register_setting( 'wpp_settings', 'wpp_allow_guests', [
       'sanitize_callback' => fn( $v ) => $v === '1' ? '1' : '0',
     ] );
+
+    register_setting( 'wpp_settings', 'wpp_min_order_amount', [
+      'sanitize_callback' => fn( $v ) => (string) max( 0, round( (float) $v, 2 ) ),
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_cutoff_time', [
+      'sanitize_callback' => [ $this, 'sanitize_cutoff_time' ],
+    ] );
+  }
+
+  public function sanitize_cutoff_time( string $value ): string {
+    $value = trim( $value );
+    if ( empty( $value ) ) {
+      return '';
+    }
+    return preg_match( '/^([01]\d|2[0-3]):([0-5]\d)$/', $value ) ? $value : '';
   }
 
   /**
@@ -89,7 +105,9 @@ class Admin_Settings
       'description' => get_option('wpp_description', 'Your order will be processed with priority and shipped via express delivery'),
       'fee_label' => get_option('wpp_fee_label', 'Priority Processing & Express Shipping'),
       'allowed_user_roles' => get_option('wpp_allowed_user_roles', ['customer']),
-      'allow_guests' => get_option('wpp_allow_guests', '1')
+      'allow_guests'      => get_option('wpp_allow_guests', '1'),
+      'min_order_amount'  => get_option('wpp_min_order_amount', '0'),
+      'cutoff_time'       => get_option('wpp_cutoff_time', ''),
     ];
   }
 
@@ -129,6 +147,17 @@ class Admin_Settings
             <input type="number" step="0.01" min="0" id="wpp_fee_amount" name="wpp_fee_amount"
               value="<?php echo esc_attr($settings['fee_amount']); ?>" />
             <p class="description"><?php _e('Amount to charge for priority processing and express shipping', 'woo-priority'); ?></p>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">
+            <label for="wpp_min_order_amount"><?php _e('Minimum Order Amount', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <input type="number" step="0.01" min="0" id="wpp_min_order_amount" name="wpp_min_order_amount"
+              value="<?php echo esc_attr($settings['min_order_amount']); ?>" />
+            <p class="description"><?php _e('Minimum cart subtotal required to show the priority option. Set to 0 to disable.', 'woo-priority'); ?></p>
           </td>
         </tr>
       </table>
@@ -274,6 +303,17 @@ class Admin_Settings
             <input type="text" id="wpp_fee_label" name="wpp_fee_label"
               value="<?php echo esc_attr($settings['fee_label']); ?>" />
             <p class="description"><?php _e('How the fee appears in cart totals and order summaries', 'woo-priority'); ?></p>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">
+            <label for="wpp_cutoff_time"><?php _e('Same-Day Cutoff Time', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <input type="time" id="wpp_cutoff_time" name="wpp_cutoff_time"
+              value="<?php echo esc_attr($settings['cutoff_time']); ?>" />
+            <p class="description"><?php _e('Show a live countdown at checkout until this time (store timezone). Leave empty to disable.', 'woo-priority'); ?></p>
           </td>
         </tr>
       </table>

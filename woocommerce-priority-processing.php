@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce Priority Processing
  * Description: Add priority processing and express shipping option at checkout
- * Version: 1.5.0
+ * Version: 1.6.0
  * Author: OpenWPClub.com
  * Author URI: https://openwpclub.com
  * License: GPL v2 or later
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define plugin constants.
 if ( ! defined( 'WPP_VERSION' ) ) {
-	define( 'WPP_VERSION', '1.5.0' );
+	define( 'WPP_VERSION', '1.6.0' );
 }
 if ( ! defined( 'WPP_PLUGIN_DIR' ) ) {
 	define( 'WPP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -297,6 +297,8 @@ class WooCommerce_Priority_Processing {
 			'wpp_enabled'            => '1',
 			'wpp_allowed_user_roles' => array( 'customer' ),
 			'wpp_allow_guests'       => '1',
+			'wpp_min_order_amount'   => '0',
+			'wpp_cutoff_time'        => '',
 		);
 
 		foreach ( $defaults as $option_name => $default_value ) {
@@ -336,6 +338,8 @@ class WooCommerce_Priority_Processing {
 			'wpp_section_title'      => __( 'Express Options', 'woo-priority' ),
 			'wpp_allowed_user_roles' => array( 'customer' ),
 			'wpp_allow_guests'       => '1',
+			'wpp_min_order_amount'   => '0',
+			'wpp_cutoff_time'        => '',
 		);
 
 		foreach ( $defaults as $option_name => $default_value ) {

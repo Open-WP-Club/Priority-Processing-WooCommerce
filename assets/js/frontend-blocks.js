@@ -17,6 +17,32 @@
     $(document.body).on('updated_checkout', function() {
       bindCheckboxEvents();
     });
+
+    initCountdown();
+  }
+
+  function initCountdown() {
+    if (!wppData.cutoff_ts || wppData.cutoff_ts <= 0) return;
+
+    var $el = $('#wpp-countdown');
+    if (!$el.length) return;
+
+    var intervalId = setInterval(function() {
+      var remaining = Math.floor((wppData.cutoff_ts - Date.now()) / 1000);
+      if (remaining <= 0) {
+        clearInterval(intervalId);
+        $el.closest('.wpp-cutoff-notice').text($el.closest('.wpp-cutoff-notice').text().split('(')[0].trim());
+        return;
+      }
+      var h = Math.floor(remaining / 3600);
+      var m = Math.floor((remaining % 3600) / 60);
+      var s = remaining % 60;
+      var parts = [];
+      if (h > 0) parts.push(h + 'h');
+      parts.push((m < 10 && h > 0 ? '0' : '') + m + 'm');
+      parts.push((s < 10 ? '0' : '') + s + 's');
+      $el.text('(' + parts.join(' ') + ')');
+    }, 1000);
   }
 
   function bindCheckboxEvents() {

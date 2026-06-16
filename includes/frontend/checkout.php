@@ -35,11 +35,12 @@ class Frontend_Checkout {
       return;
     }
 
-    $section_title = get_option('wpp_section_title', __('Express Options', 'woo-priority'));
-    $fee_amount = get_option('wpp_fee_amount', '5.00');
+    $section_title  = get_option('wpp_section_title', __('Express Options', 'woo-priority'));
+    $fee_amount     = get_option('wpp_fee_amount', '5.00');
     $checkbox_label = get_option('wpp_checkbox_label', __('Priority processing + Express shipping', 'woo-priority'));
-    $description = get_option('wpp_description', __('Your order will be processed with priority and shipped via express delivery', 'woo-priority'));
-    $is_checked = $this->get_checkbox_state();
+    $description    = get_option('wpp_description', __('Your order will be processed with priority and shipped via express delivery', 'woo-priority'));
+    $is_checked     = $this->get_checkbox_state();
+    $cutoff_info    = $this->get_cutoff_info();
 
 ?>
     <div id="wpp-priority-section" class="wpp-priority-section" style="background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 6px; padding: 20px; margin: 20px 0;">
@@ -65,6 +66,14 @@ class Frontend_Checkout {
           </span>
         </label>
       </div>
+      <?php if ($cutoff_info): ?>
+        <div class="wpp-cutoff-notice" style="margin-top: 10px; font-size: 12px; color: #856404; background: #fff3cd; border: 1px solid #ffd966; border-radius: 4px; padding: 5px 10px; display: inline-block;">
+          ⏱ <?php echo esc_html($cutoff_info['message']); ?>
+          <?php if ($cutoff_info['remaining_seconds'] > 0): ?>
+            <span id="wpp-countdown" data-ts="<?php echo esc_attr((string) $cutoff_info['cutoff_ts']); ?>"></span>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
     </div>
 <?php
   }
@@ -96,17 +105,66 @@ class Frontend_Checkout {
    * Check if priority field should be displayed
    */
   private function should_display_field() {
-    // Check if feature is enabled
     if ( get_option( 'wpp_enabled' ) !== '1' ) {
       return false;
     }
 
-    // Check user permissions
     if (!Core_Permissions::can_access_priority_processing()) {
       return false;
     }
 
+    $min_amount = (float) get_option( 'wpp_min_order_amount', '0' );
+    if ( $min_amount > 0 && WC()->cart ) {
+      if ( WC()->cart->get_subtotal() < $min_amount ) {
+        return false;
+      }
+    }
+
     return true;
+  }
+
+  /**
+   * Build cutoff time info for the checkout notice.
+   *
+   * @return array{message: string, remaining_seconds: int, cutoff_ts: int}|null
+   */
+  private function get_cutoff_info( ?DateTimeImmutable $now = null ): ?array {
+    $cutoff_time = get_option( 'wpp_cutoff_time', '' );
+    if ( empty( $cutoff_time ) ) {
+      return null;
+    }
+
+    $timezone = wp_timezone();
+    $now      = $now ?? new DateTimeImmutable( 'now', $timezone );
+    $cutoff   = DateTimeImmutable::createFromFormat( 'H:i', $cutoff_time, $timezone );
+
+    if ( ! $cutoff ) {
+      return null;
+    }
+
+    $cutoff    = $cutoff->setDate( (int) $now->format( 'Y' ), (int) $now->format( 'n' ), (int) $now->format( 'j' ) );
+    $remaining = $cutoff->getTimestamp() - $now->getTimestamp();
+
+    if ( $remaining > 0 ) {
+      $hours   = (int) floor( $remaining / 3600 );
+      $minutes = (int) floor( ( $remaining % 3600 ) / 60 );
+      $message = $hours > 0
+        /* translators: 1: hours 2: minutes */
+        ? sprintf( __( 'Order in the next %1$dh %2$dm for same-day priority', 'woo-priority' ), $hours, $minutes )
+        /* translators: %d: minutes */
+        : sprintf( __( 'Order in the next %d minutes for same-day priority', 'woo-priority' ), $minutes );
+      return [
+        'message'          => $message,
+        'remaining_seconds' => $remaining,
+        'cutoff_ts'        => $cutoff->getTimestamp() * 1000,
+      ];
+    }
+
+    return [
+      'message'          => __( 'Same-day priority cutoff has passed — next-day priority available', 'woo-priority' ),
+      'remaining_seconds' => 0,
+      'cutoff_ts'        => 0,
+    ];
   }
 
   /**
@@ -147,11 +205,13 @@ class Frontend_Checkout {
     );
 
     // Localize script with necessary data
+    $cutoff_info = $this->get_cutoff_info();
     wp_localize_script('wpp-frontend-blocks', 'wppData', [
       'ajax_url'   => admin_url('admin-ajax.php'),
       'nonce'      => wp_create_nonce('wpp_nonce'),
       'fee_amount' => get_option('wpp_fee_amount', '5.00'),
-      'fee_label'  => get_option('wpp_fee_label', __('Priority Processing & Express Shipping', 'woo-priority'))
+      'fee_label'  => get_option('wpp_fee_label', __('Priority Processing & Express Shipping', 'woo-priority')),
+      'cutoff_ts'  => $cutoff_info ? $cutoff_info['cutoff_ts'] : 0,
     ]);
   }
 }
