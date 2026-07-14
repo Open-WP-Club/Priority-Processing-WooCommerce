@@ -4,6 +4,12 @@
  * Admin Dashboard Handler
  * Manages the main admin page display and statistics dashboard
  */
+
+// Prevent direct access.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Admin_Dashboard
 {
   private $statistics;

@@ -13,6 +13,11 @@ use Automattic\WooCommerce\StoreApi\Schemas\V1\CheckoutSchema;
 use Automattic\WooCommerce\StoreApi\StoreApi;
 use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 
+// Prevent direct access.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Frontend Blocks Integration Class
  *

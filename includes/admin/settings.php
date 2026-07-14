@@ -4,6 +4,12 @@
  * Admin Settings Handler
  * Manages settings registration, validation, and form processing
  */
+
+// Prevent direct access.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Admin_Settings
 {
   public function __construct()

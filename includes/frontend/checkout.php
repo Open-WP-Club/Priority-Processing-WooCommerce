@@ -9,6 +9,11 @@
 
 declare(strict_types=1);
 
+// Prevent direct access.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Frontend Checkout Class
  *

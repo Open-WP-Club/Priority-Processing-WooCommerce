@@ -9,6 +9,11 @@
 
 declare(strict_types=1);
 
+// Prevent direct access.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Core Orders Class
  *
@@ -87,9 +92,10 @@ class Core_Orders {
 		if ( $column !== 'order_number' ) {
 			return;
 		}
-		$order = wc_get_order( $post_id );
-		if ( $order && $order->get_meta( '_priority_processing' ) === 'yes' ) {
-			echo '<span class="wpp-priority-marker" data-order="' . esc_attr( $order->get_order_number() ) . '" style="display:none;"></span>';
+		// Read postmeta directly (primed in bulk by the list table) instead of
+		// instantiating a full WC_Order just to check one flag.
+		if ( get_post_meta( $post_id, '_priority_processing', true ) === 'yes' ) {
+			echo '<span class="wpp-priority-marker" data-order="' . esc_attr( (string) $post_id ) . '" style="display:none;"></span>';
 		}
 	}
 

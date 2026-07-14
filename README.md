@@ -14,9 +14,9 @@ A WordPress plugin that adds a priority processing and express shipping option t
 
 ## Requirements
 
-- WordPress 5.8+
-- WooCommerce 5.0+
-- PHP 7.4+
+- WordPress 6.9+
+- WooCommerce 9.0+ (tested up to 10.8)
+- PHP 8.1+
 
 ## Installation
 

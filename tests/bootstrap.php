@@ -116,6 +116,7 @@ function WC(): WC_Stub {
 
 require_once __DIR__ . '/../includes/admin/settings.php';
 require_once __DIR__ . '/../includes/frontend/checkout.php';
+require_once __DIR__ . '/../includes/core/statistics.php';
 
 // ---------------------------------------------------------------------------
 // Test helpers
