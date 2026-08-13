@@ -61,6 +61,69 @@ class Admin_Settings
     register_setting( 'wpp_settings', 'wpp_cutoff_time', [
       'sanitize_callback' => [ $this, 'sanitize_cutoff_time' ],
     ] );
+
+    register_setting( 'wpp_settings', 'wpp_cart_message_enabled', [
+      'sanitize_callback' => fn( $v ) => $v === '1' ? '1' : '0',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_cart_messages', [
+      'sanitize_callback' => [ $this, 'sanitize_messages' ],
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_cart_message_mode', [
+      'sanitize_callback' => [ $this, 'sanitize_message_mode' ],
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_cart_message_threshold', [
+      'sanitize_callback' => fn( $v ) => (string) max( 0, round( (float) $v, 2 ) ),
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_product_message_enabled', [
+      'sanitize_callback' => fn( $v ) => $v === '1' ? '1' : '0',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_product_messages', [
+      'sanitize_callback' => [ $this, 'sanitize_messages' ],
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_product_message_mode', [
+      'sanitize_callback' => [ $this, 'sanitize_message_mode' ],
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_product_message_threshold', [
+      'sanitize_callback' => fn( $v ) => (string) max( 0, round( (float) $v, 2 ) ),
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_account_badge_enabled', [
+      'sanitize_callback' => fn( $v ) => $v === '1' ? '1' : '0',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_account_badge_label', [
+      'sanitize_callback' => 'sanitize_text_field',
+    ] );
+
+    register_setting( 'wpp_settings', 'wpp_account_badge_message', [
+      'sanitize_callback' => 'sanitize_textarea_field',
+    ] );
+  }
+
+  /**
+   * Sanitize a newline-separated list of messages, dropping empty lines
+   */
+  public function sanitize_messages( string $value ): string {
+    $lines = array_filter(
+      array_map( 'sanitize_text_field', explode( "\n", str_replace( "\r\n", "\n", $value ) ) ),
+      fn( $line ) => $line !== ''
+    );
+
+    return implode( "\n", $lines );
+  }
+
+  /**
+   * Sanitize the message display mode to a known value
+   */
+  public function sanitize_message_mode( string $value ): string {
+    return $value === 'threshold' ? 'threshold' : 'always';
   }
 
   public function sanitize_cutoff_time( string $value ): string {
@@ -114,6 +177,17 @@ class Admin_Settings
       'allow_guests'      => get_option('wpp_allow_guests', '1'),
       'min_order_amount'  => get_option('wpp_min_order_amount', '0'),
       'cutoff_time'       => get_option('wpp_cutoff_time', ''),
+      'cart_message_enabled'      => get_option('wpp_cart_message_enabled', '0'),
+      'cart_messages'             => get_option('wpp_cart_messages', Frontend_Messages::get_default_cart_messages()),
+      'cart_message_mode'         => get_option('wpp_cart_message_mode', 'always'),
+      'cart_message_threshold'    => get_option('wpp_cart_message_threshold', '0'),
+      'product_message_enabled'   => get_option('wpp_product_message_enabled', '0'),
+      'product_messages'          => get_option('wpp_product_messages', Frontend_Messages::get_default_product_messages()),
+      'product_message_mode'      => get_option('wpp_product_message_mode', 'always'),
+      'product_message_threshold' => get_option('wpp_product_message_threshold', '0'),
+      'account_badge_enabled' => get_option('wpp_account_badge_enabled', '0'),
+      'account_badge_label'   => get_option('wpp_account_badge_label', Frontend_Account::get_default_label()),
+      'account_badge_message' => get_option('wpp_account_badge_message', Frontend_Account::get_default_message()),
     ];
   }
 
@@ -320,6 +394,161 @@ class Admin_Settings
             <input type="time" id="wpp_cutoff_time" name="wpp_cutoff_time"
               value="<?php echo esc_attr($settings['cutoff_time']); ?>" />
             <p class="description"><?php _e('Show a live countdown at checkout until this time (store timezone). Leave empty to disable.', 'woo-priority'); ?></p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  <?php
+  }
+
+  /**
+   * Render motivational messages settings section
+   */
+  public function render_messages_settings($settings)
+  {
+  ?>
+    <div class="wpp-feature-section">
+      <div class="wpp-feature-title"><?php _e('Motivational Messages', 'woo-priority'); ?></div>
+      <p class="description"><?php _e('Show a randomly picked upsell message on the cart page and on product pages to nudge shoppers toward Priority Processing. Enable each location once you have reviewed the wording below.', 'woo-priority'); ?></p>
+
+      <table class="form-table">
+        <tr>
+          <th scope="row">
+            <label for="wpp_cart_message_enabled"><?php _e('Cart Page Message', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <div class="wpp-toggle-wrapper">
+              <label class="wpp-toggle">
+                <input type="checkbox" id="wpp_cart_message_enabled" name="wpp_cart_message_enabled" value="1" <?php checked($settings['cart_message_enabled'], '1'); ?> />
+                <span class="wpp-toggle-slider"></span>
+              </label>
+              <span class="wpp-status <?php echo ($settings['cart_message_enabled'] === '1') ? 'wpp-status-enabled' : 'wpp-status-disabled'; ?>">
+                <?php echo ($settings['cart_message_enabled'] === '1') ? __('Active', 'woo-priority') : __('Inactive', 'woo-priority'); ?>
+              </span>
+            </div>
+            <p class="description"><?php _e('Shown under the products table on the cart page.', 'woo-priority'); ?></p>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row"><?php _e('Cart Message Display', 'woo-priority'); ?></th>
+          <td>
+            <label style="display: block; margin-bottom: 6px;">
+              <input type="radio" name="wpp_cart_message_mode" value="always" <?php checked($settings['cart_message_mode'], 'always'); ?> />
+              <?php _e('Always show', 'woo-priority'); ?>
+            </label>
+            <label style="display: block;">
+              <input type="radio" name="wpp_cart_message_mode" value="threshold" <?php checked($settings['cart_message_mode'], 'threshold'); ?> />
+              <?php _e('Only when cart subtotal is at least:', 'woo-priority'); ?>
+              <input type="number" step="0.01" min="0" name="wpp_cart_message_threshold"
+                value="<?php echo esc_attr($settings['cart_message_threshold']); ?>" style="width: 100px; margin-left: 6px;" />
+            </label>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">
+            <label for="wpp_cart_messages"><?php _e('Cart Messages', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <textarea id="wpp_cart_messages" name="wpp_cart_messages" rows="6" style="width: 100%; max-width: 500px;"><?php echo esc_textarea($settings['cart_messages']); ?></textarea>
+            <p class="description"><?php _e('One message per line. A random one is shown on each page load.', 'woo-priority'); ?></p>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">
+            <label for="wpp_product_message_enabled"><?php _e('Product Page Message', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <div class="wpp-toggle-wrapper">
+              <label class="wpp-toggle">
+                <input type="checkbox" id="wpp_product_message_enabled" name="wpp_product_message_enabled" value="1" <?php checked($settings['product_message_enabled'], '1'); ?> />
+                <span class="wpp-toggle-slider"></span>
+              </label>
+              <span class="wpp-status <?php echo ($settings['product_message_enabled'] === '1') ? 'wpp-status-enabled' : 'wpp-status-disabled'; ?>">
+                <?php echo ($settings['product_message_enabled'] === '1') ? __('Active', 'woo-priority') : __('Inactive', 'woo-priority'); ?>
+              </span>
+            </div>
+            <p class="description"><?php _e('Shown under the "Add to cart" button on single product pages.', 'woo-priority'); ?></p>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row"><?php _e('Product Message Display', 'woo-priority'); ?></th>
+          <td>
+            <label style="display: block; margin-bottom: 6px;">
+              <input type="radio" name="wpp_product_message_mode" value="always" <?php checked($settings['product_message_mode'], 'always'); ?> />
+              <?php _e('Always show', 'woo-priority'); ?>
+            </label>
+            <label style="display: block;">
+              <input type="radio" name="wpp_product_message_mode" value="threshold" <?php checked($settings['product_message_mode'], 'threshold'); ?> />
+              <?php _e('Only when current cart subtotal is at least:', 'woo-priority'); ?>
+              <input type="number" step="0.01" min="0" name="wpp_product_message_threshold"
+                value="<?php echo esc_attr($settings['product_message_threshold']); ?>" style="width: 100px; margin-left: 6px;" />
+            </label>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">
+            <label for="wpp_product_messages"><?php _e('Product Messages', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <textarea id="wpp_product_messages" name="wpp_product_messages" rows="6" style="width: 100%; max-width: 500px;"><?php echo esc_textarea($settings['product_messages']); ?></textarea>
+            <p class="description"><?php _e('One message per line. A random one is shown on each page load.', 'woo-priority'); ?></p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  <?php
+  }
+
+  /**
+   * Render customer account badge settings section
+   */
+  public function render_account_badge_settings($settings)
+  {
+  ?>
+    <div class="wpp-feature-section">
+      <div class="wpp-feature-title"><?php _e('Customer Account Badge', 'woo-priority'); ?></div>
+      <p class="description"><?php _e('Show a confirmation badge on the order details view in My Account, so customers can see the priority status when they revisit an order later (the checkout thank-you page already shows its own confirmation message).', 'woo-priority'); ?></p>
+
+      <table class="form-table">
+        <tr>
+          <th scope="row">
+            <label for="wpp_account_badge_enabled"><?php _e('Enable Badge', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <div class="wpp-toggle-wrapper">
+              <label class="wpp-toggle">
+                <input type="checkbox" id="wpp_account_badge_enabled" name="wpp_account_badge_enabled" value="1" <?php checked($settings['account_badge_enabled'], '1'); ?> />
+                <span class="wpp-toggle-slider"></span>
+              </label>
+              <span class="wpp-status <?php echo ($settings['account_badge_enabled'] === '1') ? 'wpp-status-enabled' : 'wpp-status-disabled'; ?>">
+                <?php echo ($settings['account_badge_enabled'] === '1') ? __('Active', 'woo-priority') : __('Inactive', 'woo-priority'); ?>
+              </span>
+            </div>
+            <p class="description"><?php _e('Shown on orders with priority processing when viewed via My Account > Orders.', 'woo-priority'); ?></p>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">
+            <label for="wpp_account_badge_label"><?php _e('Badge Label', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <input type="text" id="wpp_account_badge_label" name="wpp_account_badge_label"
+              value="<?php echo esc_attr($settings['account_badge_label']); ?>" />
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">
+            <label for="wpp_account_badge_message"><?php _e('Badge Message', 'woo-priority'); ?></label>
+          </th>
+          <td>
+            <textarea id="wpp_account_badge_message" name="wpp_account_badge_message" rows="3" style="width: 100%; max-width: 500px;"><?php echo esc_textarea($settings['account_badge_message']); ?></textarea>
           </td>
         </tr>
       </table>

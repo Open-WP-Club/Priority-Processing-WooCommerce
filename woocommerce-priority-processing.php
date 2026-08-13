@@ -145,6 +145,20 @@ class WooCommerce_Priority_Processing {
 	public ?Frontend_Blocks_Integration $frontend_blocks = null;
 
 	/**
+	 * Frontend messages instance
+	 *
+	 * @var Frontend_Messages|null
+	 */
+	public ?Frontend_Messages $frontend_messages = null;
+
+	/**
+	 * Frontend account instance
+	 *
+	 * @var Frontend_Account|null
+	 */
+	public ?Frontend_Account $frontend_account = null;
+
+	/**
 	 * Core orders instance
 	 *
 	 * @var Core_Orders|null
@@ -226,6 +240,8 @@ class WooCommerce_Priority_Processing {
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/fees.php';
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/shipping.php';
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/blocks-integration.php';
+		require_once WPP_PLUGIN_DIR . 'includes/frontend/messages.php';
+		require_once WPP_PLUGIN_DIR . 'includes/frontend/account.php';
 
 		// Include API files.
 		require_once WPP_PLUGIN_DIR . 'includes/api/rest-controller.php';
@@ -253,6 +269,8 @@ class WooCommerce_Priority_Processing {
 		$this->frontend_fees     = new Frontend_Fees();
 		$this->frontend_shipping = new Frontend_Shipping();
 		$this->frontend_blocks   = new Frontend_Blocks_Integration();
+		$this->frontend_messages = new Frontend_Messages();
+		$this->frontend_account  = new Frontend_Account();
 		$this->wpp_api           = new WPP_REST_Controller();
 
 		// Register settings and defaults.
@@ -299,6 +317,17 @@ class WooCommerce_Priority_Processing {
 			'wpp_allow_guests'       => '1',
 			'wpp_min_order_amount'   => '0',
 			'wpp_cutoff_time'        => '',
+			'wpp_cart_message_enabled'      => '0',
+			'wpp_cart_messages'             => Frontend_Messages::get_default_cart_messages(),
+			'wpp_cart_message_mode'         => 'always',
+			'wpp_cart_message_threshold'    => '0',
+			'wpp_product_message_enabled'   => '0',
+			'wpp_product_messages'          => Frontend_Messages::get_default_product_messages(),
+			'wpp_product_message_mode'      => 'always',
+			'wpp_product_message_threshold' => '0',
+			'wpp_account_badge_enabled' => '0',
+			'wpp_account_badge_label'   => Frontend_Account::get_default_label(),
+			'wpp_account_badge_message' => Frontend_Account::get_default_message(),
 		);
 
 		foreach ( $defaults as $option_name => $default_value ) {
@@ -328,6 +357,11 @@ class WooCommerce_Priority_Processing {
 	 * @return void
 	 */
 	public static function on_activation(): void {
+		// Activation can fire before the singleton's include_files() has run, so
+		// make sure the class providing the default message copy is loaded.
+		require_once WPP_PLUGIN_DIR . 'includes/frontend/messages.php';
+		require_once WPP_PLUGIN_DIR . 'includes/frontend/account.php';
+
 		// Create default options.
 		$defaults = array(
 			'wpp_enabled'            => '0',
@@ -340,6 +374,17 @@ class WooCommerce_Priority_Processing {
 			'wpp_allow_guests'       => '1',
 			'wpp_min_order_amount'   => '0',
 			'wpp_cutoff_time'        => '',
+			'wpp_cart_message_enabled'      => '0',
+			'wpp_cart_messages'             => Frontend_Messages::get_default_cart_messages(),
+			'wpp_cart_message_mode'         => 'always',
+			'wpp_cart_message_threshold'    => '0',
+			'wpp_product_message_enabled'   => '0',
+			'wpp_product_messages'          => Frontend_Messages::get_default_product_messages(),
+			'wpp_product_message_mode'      => 'always',
+			'wpp_product_message_threshold' => '0',
+			'wpp_account_badge_enabled' => '0',
+			'wpp_account_badge_label'   => Frontend_Account::get_default_label(),
+			'wpp_account_badge_message' => Frontend_Account::get_default_message(),
 		);
 
 		foreach ( $defaults as $option_name => $default_value ) {

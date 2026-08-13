@@ -9,6 +9,8 @@ A WordPress plugin that adds a priority processing and express shipping option t
 - **Flexible Display**: Customizable labels, descriptions, and section titles
 - **Admin Integration**: Settings panel integrated with WooCommerce settings
 - **Order Management**: Visual indicators for priority orders in admin
+- **Motivational Messages**: Randomly rotated upsell messages on the cart page and product pages, with optional minimum order thresholds
+- **Customer Account Badge**: Confirmation badge shown on the order view page in My Account for orders with priority processing
 - **Modern Compatibility**: Supports both classic and block-based checkout
 - **HPOS Ready**: Compatible with WooCommerce High-Performance Order Storage
 
@@ -39,6 +41,20 @@ Navigate to **WooCommerce > Priority Processing** to customize:
 - **Checkbox Label**: Text shown next to the checkbox
 - **Description**: Help text displayed below the option
 - **Fee Label**: How the fee appears in cart/order totals
+
+### Motivational Messages
+
+- **Cart Page Message**: Enable/disable an upsell message shown under the products table on the cart page
+- **Product Page Message**: Enable/disable an upsell message shown under the "Add to cart" button on single product pages
+- **Display Mode**: Show each message always, or only once the cart subtotal reaches a configurable minimum
+- **Message Lists**: Enter one message per line for each location; a random one is picked on every page load, so you can add several variants
+- Ships with example English messages, translated to Bulgarian out of the box
+
+### Customer Account Badge
+
+- **Enable/Disable**: Toggle a confirmation badge on the order details view in My Account
+- **Badge Label & Message**: Fully editable text
+- Shown only on orders with priority processing, when customers revisit the order later (the checkout thank-you page already shows its own confirmation message)
 
 ## How It Works
 

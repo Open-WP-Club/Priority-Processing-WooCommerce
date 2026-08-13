@@ -130,3 +130,59 @@ msgstr "Мениджъри на магазина и администратори
 #: includes/core/permissions.php:183
 msgid "Guest Users"
 msgstr "Гост потребители"
+
+#: includes/frontend/messages.php:150
+msgid "⚡ Skip the line — add Priority Processing and get your order moving before everyone else's."
+msgstr "⚡ Пропусни опашката — добави Priority Processing и изпрати поръчката си преди всички останали."
+
+#: includes/frontend/messages.php:151
+msgid "🚀 Time is money. Priority Processing means days less waiting."
+msgstr "🚀 Времето е пари. С Priority Processing чакаш с дни по-малко."
+
+#: includes/frontend/messages.php:152
+msgid "📦 Your order could be on its way faster — just add Priority Processing."
+msgstr "📦 Поръчката ти може да потегли по-бързо — просто добави Priority Processing."
+
+#: includes/frontend/messages.php:153
+msgid "🔥 Priority customers get their orders out about 2x faster on average."
+msgstr "🔥 Клиентите с приоритет получават поръчките си средно 2 пъти по-бързо."
+
+#: includes/frontend/messages.php:154
+msgid "🎯 Need it now, not next week? Priority Processing is for you."
+msgstr "🎯 Трябва ти сега, а не другата седмица? Priority Processing е за теб."
+
+#: includes/frontend/messages.php:155
+msgid "⏱ Every minute you wait is a minute you didn't have to. Speed things up with one click."
+msgstr "⏱ Всяка минута чакане е излишна. Ускори нещата само с едно кликване."
+
+#: includes/frontend/messages.php:169
+msgid "⚡ In a hurry for this one? Add Priority Processing at checkout and get it first."
+msgstr "⚡ Бързаш за този продукт? Добави Priority Processing при поръчката и го получи първи."
+
+#: includes/frontend/messages.php:170
+msgid "🚀 Don't want to wait? Turn on Priority Processing on the next step."
+msgstr "🚀 Не искаш да чакаш? Включи Priority Processing на следващата стъпка."
+
+#: includes/frontend/messages.php:171
+msgid "🎁 This item is in high demand — Priority Processing helps make sure it reaches you faster."
+msgstr "🎁 Този продукт е много търсен — Priority Processing помага да стигне до теб по-бързо."
+
+#: includes/frontend/messages.php:172
+msgid "🏆 Our VIP customers choose Priority Processing. Why not you?"
+msgstr "🏆 Нашите VIP клиенти избират Priority Processing. Защо не и ти?"
+
+#: includes/frontend/messages.php:173
+msgid "📦 Ready to ship the moment you order — with Priority Processing."
+msgstr "📦 Готов за изпращане веднага след поръчката — с Priority Processing."
+
+#: includes/frontend/messages.php:174
+msgid "⏳ Every extra day of waiting is a day too many. Speed it up with Priority Processing."
+msgstr "⏳ Всеки допълнителен ден чакане е излишен. Ускори с Priority Processing."
+
+#: includes/frontend/account.php:90
+msgid "⚡ Priority Processing Active"
+msgstr "⚡ Активна приоритетна обработка"
+
+#: includes/frontend/account.php:100
+msgid "This order is being processed and shipped with priority."
+msgstr "Тази поръчка се обработва и изпраща с приоритет."

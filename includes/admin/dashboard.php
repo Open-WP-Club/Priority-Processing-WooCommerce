@@ -173,6 +173,8 @@ class Admin_Dashboard
             $this->settings_handler->render_basic_settings($settings);
             $this->settings_handler->render_permissions_settings($settings);
             $this->settings_handler->render_display_settings($settings);
+            $this->settings_handler->render_messages_settings($settings);
+            $this->settings_handler->render_account_badge_settings($settings);
             ?>
 
             <?php submit_button(__('Save Changes', 'woo-priority'), 'primary', 'submit', false); ?>

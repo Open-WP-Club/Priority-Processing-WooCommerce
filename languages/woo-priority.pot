@@ -128,3 +128,59 @@ msgstr ""
 #: includes/core/permissions.php:183
 msgid "Guest Users"
 msgstr ""
+
+#: includes/frontend/messages.php:150
+msgid "⚡ Skip the line — add Priority Processing and get your order moving before everyone else's."
+msgstr ""
+
+#: includes/frontend/messages.php:151
+msgid "🚀 Time is money. Priority Processing means days less waiting."
+msgstr ""
+
+#: includes/frontend/messages.php:152
+msgid "📦 Your order could be on its way faster — just add Priority Processing."
+msgstr ""
+
+#: includes/frontend/messages.php:153
+msgid "🔥 Priority customers get their orders out about 2x faster on average."
+msgstr ""
+
+#: includes/frontend/messages.php:154
+msgid "🎯 Need it now, not next week? Priority Processing is for you."
+msgstr ""
+
+#: includes/frontend/messages.php:155
+msgid "⏱ Every minute you wait is a minute you didn't have to. Speed things up with one click."
+msgstr ""
+
+#: includes/frontend/messages.php:169
+msgid "⚡ In a hurry for this one? Add Priority Processing at checkout and get it first."
+msgstr ""
+
+#: includes/frontend/messages.php:170
+msgid "🚀 Don't want to wait? Turn on Priority Processing on the next step."
+msgstr ""
+
+#: includes/frontend/messages.php:171
+msgid "🎁 This item is in high demand — Priority Processing helps make sure it reaches you faster."
+msgstr ""
+
+#: includes/frontend/messages.php:172
+msgid "🏆 Our VIP customers choose Priority Processing. Why not you?"
+msgstr ""
+
+#: includes/frontend/messages.php:173
+msgid "📦 Ready to ship the moment you order — with Priority Processing."
+msgstr ""
+
+#: includes/frontend/messages.php:174
+msgid "⏳ Every extra day of waiting is a day too many. Speed it up with Priority Processing."
+msgstr ""
+
+#: includes/frontend/account.php:90
+msgid "⚡ Priority Processing Active"
+msgstr ""
+
+#: includes/frontend/account.php:100
+msgid "This order is being processed and shipped with priority."
+msgstr ""
