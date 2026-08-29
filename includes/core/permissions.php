@@ -210,4 +210,29 @@ class Core_Permissions {
     $priority = WC()->session->get('priority_processing', false);
     return ($priority === true || $priority === '1' || $priority === 1);
   }
+
+  /**
+   * Check whether priority processing may be enabled for the current request.
+   *
+   * This is intentionally enforced server-side as well as in the checkout UI,
+   * so a stale session or a crafted AJAX/Store API request cannot bypass the
+   * feature and role settings.
+   *
+   * @since 1.7.1
+   * @return bool
+   */
+  public static function can_enable_priority_processing(): bool {
+    if ( get_option( 'wpp_enabled', '0' ) !== '1' || ! self::can_access_priority_processing() ) {
+      return false;
+    }
+
+    $minimum = max( 0.0, (float) get_option( 'wpp_min_order_amount', '0' ) );
+    if ( $minimum <= 0 ) {
+      return true;
+    }
+
+    return function_exists( 'WC' )
+      && WC()->cart
+      && (float) WC()->cart->get_subtotal() >= $minimum;
+  }
 }

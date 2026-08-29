@@ -22,6 +22,19 @@ $options = [
 	'wpp_section_title',
 	'wpp_allowed_user_roles',
 	'wpp_allow_guests',
+	'wpp_min_order_amount',
+	'wpp_cutoff_time',
+	'wpp_cart_message_enabled',
+	'wpp_cart_messages',
+	'wpp_cart_message_mode',
+	'wpp_cart_message_threshold',
+	'wpp_product_message_enabled',
+	'wpp_product_messages',
+	'wpp_product_message_mode',
+	'wpp_product_message_threshold',
+	'wpp_account_badge_enabled',
+	'wpp_account_badge_label',
+	'wpp_account_badge_message',
 ];
 
 foreach ( $options as $option ) {

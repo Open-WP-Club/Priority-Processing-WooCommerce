@@ -44,7 +44,7 @@ class Frontend_Fees {
 	 * @return void
 	 */
 	public function add_priority_fee_to_cart(): void {
-		if ( ! Core_Permissions::is_priority_active() ) {
+		if ( ! Core_Permissions::is_priority_active() || ! Core_Permissions::can_enable_priority_processing() ) {
 			return;
 		}
 
@@ -71,7 +71,8 @@ class Frontend_Fees {
 		}
 
 		$priority = WC()->session->get( 'priority_processing', false );
-		if ( $priority === true || $priority === 1 || $priority === '1' ) {
+		if ( ( $priority === true || $priority === 1 || $priority === '1' )
+			&& Core_Permissions::can_enable_priority_processing() ) {
 			$this->apply_priority_to_order( $order );
 		}
 	}

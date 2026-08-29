@@ -100,4 +100,21 @@ class PermissionsTest extends TestCase
 
         $this->assertFalse(Core_Permissions::user_can_access(8));
     }
+
+    public function test_priority_cannot_be_enabled_when_feature_is_disabled(): void
+    {
+        wpp_perm_set_option('wpp_enabled', '0');
+        wpp_perm_set_option('wpp_allow_guests', '1');
+
+        $this->assertFalse(Core_Permissions::can_enable_priority_processing());
+    }
+
+    public function test_priority_can_be_enabled_when_feature_and_access_are_allowed(): void
+    {
+        wpp_perm_set_option('wpp_enabled', '1');
+        wpp_perm_set_option('wpp_allow_guests', '1');
+        wpp_perm_set_option('wpp_min_order_amount', '0');
+
+        $this->assertTrue(Core_Permissions::can_enable_priority_processing());
+    }
 }

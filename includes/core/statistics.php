@@ -26,6 +26,7 @@ class Core_Statistics {
 	public function __construct() {
 		$this->cache_key = 'wpp_statistics_data';
 		add_action( 'wp_ajax_wpp_refresh_stats', [ $this, 'ajax_refresh_stats' ] );
+		add_action( 'wpp_daily_stats_refresh', [ $this, 'daily_cache_refresh' ] );
 	}
 
 	/**
@@ -276,7 +277,6 @@ class Core_Statistics {
 		if ( ! wp_next_scheduled( 'wpp_daily_stats_refresh' ) ) {
 			wp_schedule_event( time(), 'daily', 'wpp_daily_stats_refresh' );
 		}
-		add_action( 'wpp_daily_stats_refresh', [ $this, 'daily_cache_refresh' ] );
 	}
 
 	/** @internal */

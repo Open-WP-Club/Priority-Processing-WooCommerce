@@ -11,7 +11,9 @@ jobs:
 
     strategy:
       matrix:
-        php: ['8.2']
+        # PHPUnit 13 requires PHP 8.4.1+. This is the development/test runtime;
+        # the distributed plugin itself continues to support PHP 8.1+.
+        php: ['8.4']
 
     steps:
       - name: Checkout code

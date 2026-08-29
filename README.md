@@ -78,6 +78,22 @@ Navigate to **WooCommerce > Priority Processing** to customize:
 - **Compatibility**: Works with popular themes and checkout customizations
 - **Performance**: Lightweight implementation with minimal overhead
 
+## Local Testing
+
+Docker, Node.js 18+ and npm are required. The local environment includes the
+latest WordPress and WooCommerce releases and uses PHP 8.4.
+
+```bash
+npm install
+npm run env:start
+composer test
+npm run test:integration
+```
+
+Open WordPress at `http://localhost:8888` (`admin` / `password`). Stop the
+containers with `npm run env:stop`, or reset their databases with
+`npm run env:clean`.
+
 ## Admin Features
 
 - **Visual Indicators**: Priority orders clearly marked with ⚡ symbol

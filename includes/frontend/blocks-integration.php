@@ -207,6 +207,11 @@ class Frontend_Blocks_Integration {
 		$priority_enabled = filter_var( $data['priority_enabled'], FILTER_VALIDATE_BOOLEAN );
 
 		if ( WC()->session ) {
+			if ( $priority_enabled && ! Core_Permissions::can_enable_priority_processing() ) {
+				WC()->session->set( 'priority_processing', false );
+				return;
+			}
+
 			WC()->session->set( 'priority_processing', $priority_enabled );
 
 			// Recalculate cart totals.

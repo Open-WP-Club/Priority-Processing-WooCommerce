@@ -120,6 +120,9 @@ class Core_Permissions {
     public static function can_access_priority_processing(): bool {
         return $GLOBALS['_wpp_can_access'] ?? true;
     }
+    public static function can_enable_priority_processing(): bool {
+        return $GLOBALS['_wpp_can_enable'] ?? true;
+    }
     public static function get_allowed_user_roles(): array {
         return $GLOBALS['_wpp_allowed_roles'] ?? ['customer'];
     }
@@ -293,6 +296,7 @@ function wpp_set_option(string $key, mixed $value): void {
 function wpp_reset(): void {
     $GLOBALS['_wpp_options']          = [];
     $GLOBALS['_wpp_can_access']       = true;
+    $GLOBALS['_wpp_can_enable']       = true;
     $GLOBALS['_wpp_cart_subtotal']    = 100.0;
     $GLOBALS['_wpp_timezone']         = 'UTC';
     $GLOBALS['_wpp_allowed_roles']    = ['customer'];

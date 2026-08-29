@@ -48,6 +48,16 @@ class FeesTest extends TestCase
         $this->assertSame([], WC()->cart->fees);
     }
 
+    public function test_no_fee_added_when_priority_is_not_available(): void
+    {
+        WC()->session->set('priority_processing', true);
+        $GLOBALS['_wpp_can_enable'] = false;
+
+        $this->fees->add_priority_fee_to_cart();
+
+        $this->assertSame([], WC()->cart->fees);
+    }
+
     public function test_session_value_as_string_one_counts_as_active(): void
     {
         WC()->session->set('priority_processing', '1');
@@ -84,5 +94,17 @@ class FeesTest extends TestCase
         $this->assertSame(9.99, $order->get_meta('_priority_fee_amount'));
         $this->assertSame('express', $order->get_meta('_priority_service_level'));
         $this->assertTrue($order->saved);
+    }
+
+    public function test_order_meta_untouched_when_priority_is_not_available(): void
+    {
+        WC()->session->set('priority_processing', true);
+        $GLOBALS['_wpp_can_enable'] = false;
+        $order = new WC_Order();
+
+        $this->fees->save_priority_to_order($order, []);
+
+        $this->assertSame('', $order->get_meta('_priority_processing'));
+        $this->assertFalse($order->saved);
     }
 }

@@ -67,6 +67,18 @@ class Frontend_AJAX {
 		// Get priority status from request (support both parameter formats).
 		$priority_enabled = $this->get_priority_status_from_request();
 
+		// Disabling is always allowed, but enabling must pass the current
+		// server-side feature and role checks.
+		if ( $priority_enabled && ! Core_Permissions::can_enable_priority_processing() ) {
+			WC()->session->set( 'priority_processing', false );
+			wp_send_json_error(
+				array(
+					'message' => __( 'Priority processing is not available', 'woo-priority' ),
+				),
+				403
+			);
+		}
+
 		// Update session EARLY to ensure it's set before any calculations.
 		WC()->session->set( 'priority_processing', $priority_enabled );
 

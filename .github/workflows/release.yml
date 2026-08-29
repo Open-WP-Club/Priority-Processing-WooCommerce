@@ -51,6 +51,7 @@ jobs:
           --exclude='.DS_Store' \
           --exclude='Thumbs.db' \
           --exclude='.env*' \
+          --exclude='.wp-env*.json' \
           --exclude='*.log'
 
     - name: Create zip file
