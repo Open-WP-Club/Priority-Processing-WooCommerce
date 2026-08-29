@@ -2,6 +2,8 @@
 
 A WordPress plugin that adds a priority processing and express shipping option to WooCommerce checkout, allowing customers to pay an additional fee for faster order handling.
 
+Current version: **1.7.1**
+
 ## Features
 
 - **Priority Processing Option**: Add a checkbox at checkout for priority processing
@@ -13,6 +15,8 @@ A WordPress plugin that adds a priority processing and express shipping option t
 - **Customer Account Badge**: Confirmation badge shown on the order view page in My Account for orders with priority processing
 - **Modern Compatibility**: Supports both classic and block-based checkout
 - **HPOS Ready**: Compatible with WooCommerce High-Performance Order Storage
+- **Server-side Access Control**: Feature status, user permissions, and minimum order amount are enforced for classic AJAX, Store API, fees, and order creation
+- **Scheduled Statistics**: Daily WooCommerce statistics refresh with transient caching
 
 ## Requirements
 
@@ -80,19 +84,56 @@ Navigate to **WooCommerce > Priority Processing** to customize:
 
 ## Local Testing
 
-Docker, Node.js 18+ and npm are required. The local environment includes the
-latest WordPress and WooCommerce releases and uses PHP 8.4.
+### Unit Tests
+
+The PHPUnit suite covers settings sanitization, permissions, checkout state,
+fees, shipping metadata, account messages, order operations, statistics, and
+REST API permissions.
+
+PHPUnit 13 requires PHP 8.4.1 or newer for development. This does not change
+the plugin's PHP 8.1 runtime requirement.
+
+```bash
+composer install
+composer test
+```
+
+### WordPress and WooCommerce Integration Test
+
+Docker, Node.js 18+ and npm are required. `wp-env` creates an isolated local
+site using PHP 8.4 and installs the latest WordPress and WooCommerce releases.
 
 ```bash
 npm install
 npm run env:start
-composer test
 npm run test:integration
 ```
 
-Open WordPress at `http://localhost:8888` (`admin` / `password`). Stop the
-containers with `npm run env:stop`, or reset their databases with
-`npm run env:clean`.
+The integration smoke test verifies:
+
+- WooCommerce and Priority Processing activation
+- Plugin service initialization
+- Daily statistics cron scheduling
+- Priority fee creation in a real WooCommerce cart
+- WooCommerce order creation and CRUD persistence
+- Priority and express-service order metadata
+- Priority-order queries through the WooCommerce storage API, including HPOS-compatible access
+- Cleanup of the temporary order, session state, and modified options
+
+Open the local site at `http://localhost:8888` and sign in with `admin` /
+`password`.
+
+```bash
+npm run env:stop   # Stop the containers and preserve their data.
+npm run env:clean  # Reset the development database and environment.
+```
+
+For a complete local check, run both suites:
+
+```bash
+composer test
+npm run test:integration
+```
 
 ## Admin Features
 
