@@ -57,11 +57,11 @@ class CalculatePriorityRevenueTest extends TestCase
         $this->assertSame(0.0, $result['priority_percentage']);
     }
 
-    public function test_sums_only_fees_matching_priority_label_or_containing_priority(): void
+    public function test_sums_only_fees_with_an_exact_legacy_label(): void
     {
         $order = $this->feeOrder(1, [
             ['Priority Processing & Express Shipping', 5.0], // exact label match
-            ['Priority Rush', 7.5],                          // contains "Priority"
+            ['Priority Rush', 7.5],                          // partial match, must be excluded
             ['Gift Wrap', 2.0],                               // unrelated fee, must be excluded
         ]);
 
@@ -73,8 +73,42 @@ class CalculatePriorityRevenueTest extends TestCase
 
         $result = $this->invoke($this->baseStats(1));
 
-        $this->assertSame(12.5, $result['total_priority_revenue']);
-        $this->assertSame(6.25, $result['average_priority_fee']);
+        $this->assertSame(5.0, $result['total_priority_revenue']);
+        $this->assertSame(5.0, $result['average_priority_fee']);
+    }
+
+    public function test_sums_marked_fee_after_its_label_changes(): void
+    {
+        $order = new WC_Order();
+        $fee   = new WC_Order_Item_Fee();
+        $fee->set_name('Old custom rush label');
+        $fee->set_total(7.5);
+        $fee->add_meta_data(Frontend_Fees::FEE_META_KEY, Frontend_Fees::FEE_META_VALUE, true);
+        $order->add_item($fee);
+
+        $GLOBALS['_wpp_order_query_pages'][1] = (object) [
+            'orders' => [$order], 'total' => 1, 'max_num_pages' => 1,
+        ];
+
+        $result = $this->invoke($this->baseStats(1));
+
+        $this->assertSame(7.5, $result['total_priority_revenue']);
+        $this->assertSame(7.5, $result['average_priority_fee']);
+    }
+
+    public function test_prefers_recorded_priority_amount_over_fee_label(): void
+    {
+        $order = $this->feeOrder(1, [['Unrelated fee', 99.0]]);
+        $order->update_meta_data('_priority_fee_amount', 8.25);
+
+        $GLOBALS['_wpp_order_query_pages'][1] = (object) [
+            'orders' => [$order], 'total' => 1, 'max_num_pages' => 1,
+        ];
+
+        $result = $this->invoke($this->baseStats(1));
+
+        $this->assertSame(8.25, $result['total_priority_revenue']);
+        $this->assertSame(8.25, $result['average_priority_fee']);
     }
 
     public function test_paginates_across_multiple_pages(): void

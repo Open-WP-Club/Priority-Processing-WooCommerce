@@ -70,6 +70,34 @@ class FeesTest extends TestCase
 
     // -- save_priority_to_order() -----------------------------------------
 
+    public function test_marks_priority_order_fee_with_plugin_metadata(): void
+    {
+        WC()->session->set('priority_processing', true);
+        wpp_set_option('wpp_fee_label', 'Rush Fee');
+
+        $item = new WC_Order_Item_Fee();
+        $item->set_name('Rush Fee');
+
+        $this->fees->mark_priority_fee_item($item, 'rush-fee', new stdClass(), new WC_Order());
+
+        $this->assertSame('yes', $item->get_meta(Frontend_Fees::FEE_META_KEY, true));
+        $this->assertTrue(Frontend_Fees::is_priority_fee($item, 'Renamed Fee'));
+    }
+
+    public function test_does_not_mark_an_unrelated_order_fee(): void
+    {
+        WC()->session->set('priority_processing', true);
+        wpp_set_option('wpp_fee_label', 'Rush Fee');
+
+        $item = new WC_Order_Item_Fee();
+        $item->set_name('Gift wrapping');
+
+        $this->fees->mark_priority_fee_item($item, 'gift-wrapping', new stdClass(), new WC_Order());
+
+        $this->assertSame('', $item->get_meta(Frontend_Fees::FEE_META_KEY, true));
+        $this->assertFalse(Frontend_Fees::is_priority_fee($item, 'Rush Fee'));
+    }
+
     public function test_order_meta_untouched_when_session_priority_not_set(): void
     {
         WC()->session->set('priority_processing', false);

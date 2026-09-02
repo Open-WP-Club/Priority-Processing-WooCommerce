@@ -27,12 +27,12 @@ class Frontend_Messages {
 	 * @since 1.8.0
 	 */
 	public function __construct() {
-		add_action( 'woocommerce_after_cart_table', array( $this, 'render_cart_message' ) );
+		add_action( 'woocommerce_before_cart_table', array( $this, 'render_cart_message' ) );
 		add_action( 'woocommerce_after_add_to_cart_button', array( $this, 'render_product_message' ) );
 	}
 
 	/**
-	 * Render the motivational message under the cart items table
+	 * Render the motivational message above the cart items table
 	 *
 	 * @since 1.8.0
 	 * @return void
@@ -95,6 +95,10 @@ class Frontend_Messages {
 	 */
 	private function should_display( string $enabled_option, string $mode_option, string $threshold_option ): bool {
 		if ( get_option( 'wpp_enabled' ) !== '1' ) {
+			return false;
+		}
+
+		if ( ! Core_Permissions::can_access_priority_processing() ) {
 			return false;
 		}
 

@@ -30,6 +30,15 @@ class MessagesTest extends TestCase
 
     // -- should_display() -----------------------------------------------
 
+    public function test_registers_cart_message_above_cart_table(): void
+    {
+        $callbacks = $GLOBALS['_wpp_actions']['woocommerce_before_cart_table'] ?? [];
+
+        $this->assertCount(1, $callbacks);
+        $this->assertSame([$this->messages, 'render_cart_message'], $callbacks[0]['callback']);
+        $this->assertArrayNotHasKey('woocommerce_after_cart_table', $GLOBALS['_wpp_actions']);
+    }
+
     public function test_hidden_when_master_feature_disabled(): void
     {
         wpp_set_option('wpp_enabled', '0');
@@ -43,6 +52,16 @@ class MessagesTest extends TestCase
         wpp_set_option('wpp_enabled', '1');
         wpp_set_option('wpp_cart_message_enabled', '0');
         wpp_set_option('wpp_cart_message_mode', 'always');
+        $this->assertFalse($this->shouldDisplay('wpp_cart_message_enabled', 'wpp_cart_message_mode', 'wpp_cart_message_threshold'));
+    }
+
+    public function test_hidden_when_current_user_cannot_access_priority_processing(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_cart_message_enabled', '1');
+        wpp_set_option('wpp_cart_message_mode', 'always');
+        $GLOBALS['_wpp_can_access'] = false;
+
         $this->assertFalse($this->shouldDisplay('wpp_cart_message_enabled', 'wpp_cart_message_mode', 'wpp_cart_message_threshold'));
     }
 

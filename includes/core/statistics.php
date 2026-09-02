@@ -148,8 +148,19 @@ class Core_Statistics {
 				$result = wc_get_orders( array_merge( $base, [ 'paged' => $page ] ) );
 
 				foreach ( $result->orders as $order ) {
+					$stored_fee_amount = $order->get_meta( '_priority_fee_amount' );
+					if ( '' !== $stored_fee_amount && is_numeric( $stored_fee_amount ) ) {
+						$amount = (float) $stored_fee_amount;
+						if ( $amount > 0 ) {
+							$priority_revenue += $amount;
+							$total_fee_amount += $amount;
+							$fee_count++;
+						}
+						continue;
+					}
+
 					foreach ( $order->get_fees() as $fee ) {
-						if ( str_contains( $fee->get_name(), 'Priority' ) || $fee->get_name() === $fee_label ) {
+						if ( Frontend_Fees::is_priority_fee( $fee, (string) $fee_label ) ) {
 							$amount           = floatval( $fee->get_total() );
 							$priority_revenue += $amount;
 							$total_fee_amount += $amount;

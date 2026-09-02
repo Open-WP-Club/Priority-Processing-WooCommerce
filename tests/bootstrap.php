@@ -37,7 +37,13 @@ function wp_timezone(): DateTimeZone {
     return new DateTimeZone($GLOBALS['_wpp_timezone'] ?? 'UTC');
 }
 
-function add_action(): void {}
+function add_action(string $hook, mixed $callback, int $priority = 10, int $accepted_args = 1): void {
+    $GLOBALS['_wpp_actions'][$hook][] = [
+        'callback'      => $callback,
+        'priority'      => $priority,
+        'accepted_args' => $accepted_args,
+    ];
+}
 function add_filter(): void {}
 function register_setting(): void {}
 function wp_verify_nonce(): bool { return $GLOBALS['_wpp_nonce_valid'] ?? true; }
@@ -174,6 +180,7 @@ class WC_Order_Item_Fee {
     public int $id;
     private string $name = '';
     private float $total = 0.0;
+    private array $meta = [];
 
     public function __construct() {
         $this->id = self::$next_id++;
@@ -185,6 +192,8 @@ class WC_Order_Item_Fee {
     public function set_order_id(int $order_id): void {}
     public function get_name(): string { return $this->name; }
     public function get_total(): float { return $this->total; }
+    public function add_meta_data(string $key, mixed $value, bool $unique = false): void { $this->meta[$key] = $value; }
+    public function get_meta(string $key, bool $single = true): mixed { return $this->meta[$key] ?? ''; }
 }
 
 class WC_Order {
@@ -294,6 +303,7 @@ function wpp_set_option(string $key, mixed $value): void {
 }
 
 function wpp_reset(): void {
+	$GLOBALS['_wpp_actions']          = [];
     $GLOBALS['_wpp_options']          = [];
     $GLOBALS['_wpp_can_access']       = true;
     $GLOBALS['_wpp_can_enable']       = true;

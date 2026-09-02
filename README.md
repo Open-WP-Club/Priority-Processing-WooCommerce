@@ -2,7 +2,7 @@
 
 A WordPress plugin that adds a priority processing and express shipping option to WooCommerce checkout, allowing customers to pay an additional fee for faster order handling.
 
-Current version: **1.7.1**
+Current version: **1.8.0**
 
 ## Features
 
@@ -48,7 +48,7 @@ Navigate to **WooCommerce > Priority Processing** to customize:
 
 ### Motivational Messages
 
-- **Cart Page Message**: Enable/disable an upsell message shown under the products table on the cart page
+- **Cart Page Message**: Enable/disable an upsell message shown above the products table on the cart page
 - **Product Page Message**: Enable/disable an upsell message shown under the "Add to cart" button on single product pages
 - **Display Mode**: Show each message always, or only once the cart subtotal reaches a configurable minimum
 - **Message Lists**: Enter one message per line for each location; a random one is picked on every page load, so you can add several variants

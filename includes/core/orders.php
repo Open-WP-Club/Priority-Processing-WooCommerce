@@ -189,7 +189,7 @@ class Core_Orders {
 
 		$existing_fee = null;
 		foreach ( $order->get_fees() as $fee ) {
-			if ( str_contains( $fee->get_name(), 'Priority' ) || $fee->get_name() === $fee_label ) {
+			if ( Frontend_Fees::is_priority_fee( $fee, (string) $fee_label ) ) {
 				$existing_fee = $fee;
 				break;
 			}
@@ -288,7 +288,7 @@ class Core_Orders {
 
 				$existing_fee = null;
 				foreach ( $order->get_fees() as $fee ) {
-					if ( str_contains( $fee->get_name(), 'Priority' ) || $fee->get_name() === $fee_label ) {
+					if ( Frontend_Fees::is_priority_fee( $fee, (string) $fee_label ) ) {
 						$existing_fee = $fee;
 						break;
 					}
@@ -299,6 +299,9 @@ class Core_Orders {
 				}
 
 				$order->update_meta_data( '_priority_processing', 'yes' );
+				$order->update_meta_data( '_requires_express_shipping', 'yes' );
+				$order->update_meta_data( '_priority_fee_amount', $fee_amount );
+				$order->update_meta_data( '_priority_service_level', 'express' );
 
 				if ( $fee_amount > 0 ) {
 					$fee = new WC_Order_Item_Fee();
@@ -306,6 +309,7 @@ class Core_Orders {
 					$fee->set_amount( $fee_amount );
 					$fee->set_total( $fee_amount );
 					$fee->set_order_id( $order_id );
+					$fee->add_meta_data( Frontend_Fees::FEE_META_KEY, Frontend_Fees::FEE_META_VALUE, true );
 					$order->add_item( $fee );
 					wpp_log( "Added priority fee of {$fee_amount} to order #{$order_id}" );
 				}
@@ -324,10 +328,13 @@ class Core_Orders {
 
 			} else {
 				$order->delete_meta_data( '_priority_processing' );
+				$order->delete_meta_data( '_requires_express_shipping' );
+				$order->delete_meta_data( '_priority_fee_amount' );
+				$order->delete_meta_data( '_priority_service_level' );
 
 				$fees_to_remove = [];
 				foreach ( $order->get_fees() as $fee_id => $fee ) {
-					if ( str_contains( $fee->get_name(), 'Priority' ) || $fee->get_name() === $fee_label ) {
+					if ( Frontend_Fees::is_priority_fee( $fee, (string) $fee_label ) ) {
 						$fees_to_remove[] = $fee_id;
 					}
 				}
