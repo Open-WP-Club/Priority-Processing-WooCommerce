@@ -26,9 +26,15 @@ class Frontend_Messages {
 	 *
 	 * @since 1.8.0
 	 */
-	public function __construct() {
+	public function __construct( bool $register_hooks = true ) {
+		if ( ! $register_hooks ) {
+			return;
+		}
 		add_action( 'woocommerce_before_cart_table', array( $this, 'render_cart_message' ) );
 		add_action( 'woocommerce_after_add_to_cart_button', array( $this, 'render_product_message' ) );
+		add_filter( 'render_block_woocommerce/cart', array( $this, 'render_cart_block_message' ) );
+		add_filter( 'render_block_woocommerce/add-to-cart-form', array( $this, 'render_product_block_message' ) );
+		add_filter( 'render_block_woocommerce/add-to-cart-with-options', array( $this, 'render_product_block_message' ) );
 	}
 
 	/**
@@ -38,16 +44,48 @@ class Frontend_Messages {
 	 * @return void
 	 */
 	public function render_cart_message(): void {
+		$message = $this->get_cart_message();
+		if ( '' !== $message ) {
+			$this->render_message( $message );
+		}
+	}
+
+	/** Return eligible cart text for both classic templates and the Store API. */
+	public function get_cart_message(): string {
 		if ( ! $this->should_display( 'wpp_cart_message_enabled', 'wpp_cart_message_mode', 'wpp_cart_message_threshold' ) ) {
-			return;
+			return '';
+		}
+		return $this->get_random_message( 'wpp_cart_messages' );
+	}
+
+	/** The Cart Block does not execute woocommerce_before_cart_table. */
+	public function render_cart_block_message( string $content ): string {
+		if ( is_admin() || '' === trim( $content ) ) {
+			return $content;
 		}
 
-		$message = $this->get_random_message( 'wpp_cart_messages' );
-		if ( '' === $message ) {
-			return;
-		}
+		// Keep the container even below the threshold so Store API updates can reveal it.
+		wp_enqueue_script(
+			'wpp-cart-messages',
+			WPP_PLUGIN_URL . 'assets/js/cart-messages.js',
+			array( 'wp-data', 'wc-blocks-data-store' ),
+			WPP_VERSION,
+			true
+		);
+		ob_start();
+		$this->render_cart_message();
+		$message = (string) ob_get_clean();
+		return '<div class="wpp-cart-block-message" aria-live="polite">' . $message . '</div>' . $content;
+	}
 
-		$this->render_message( $message );
+	/** Support block product templates without duplicating legacy hook output. */
+	public function render_product_block_message( string $content ): string {
+		if ( is_admin() || ! is_product() || '' === trim( $content ) || str_contains( $content, 'wpp-motivation-message' ) ) {
+			return $content;
+		}
+		ob_start();
+		$this->render_product_message();
+		return $content . (string) ob_get_clean();
 	}
 
 	/**
@@ -94,7 +132,7 @@ class Frontend_Messages {
 	 * @return bool
 	 */
 	private function should_display( string $enabled_option, string $mode_option, string $threshold_option ): bool {
-		if ( get_option( 'wpp_enabled' ) !== '1' ) {
+		if ( (string) get_option( 'wpp_enabled' ) !== '1' ) {
 			return false;
 		}
 
@@ -102,7 +140,7 @@ class Frontend_Messages {
 			return false;
 		}
 
-		if ( get_option( $enabled_option ) !== '1' ) {
+		if ( (string) get_option( $enabled_option ) !== '1' ) {
 			return false;
 		}
 
@@ -127,7 +165,10 @@ class Frontend_Messages {
 	 * @return string
 	 */
 	private function get_random_message( string $option_name ): string {
-		$raw = (string) get_option( $option_name, '' );
+		$default = 'wpp_cart_messages' === $option_name
+			? self::get_default_cart_messages()
+			: self::get_default_product_messages();
+		$raw = (string) get_option( $option_name, $default );
 
 		$messages = array_values(
 			array_filter(

@@ -105,9 +105,9 @@ class MessagesTest extends TestCase
 
     // -- get_random_message() --------------------------------------------
 
-    public function test_returns_empty_string_when_option_not_set(): void
+    public function test_uses_default_messages_when_option_not_set(): void
     {
-        $this->assertSame('', $this->randomMessage('wpp_cart_messages'));
+        $this->assertContains($this->randomMessage('wpp_cart_messages'), explode("\n", Frontend_Messages::get_default_cart_messages()));
     }
 
     public function test_returns_empty_string_when_only_blank_lines(): void
@@ -190,4 +190,60 @@ class MessagesTest extends TestCase
 
         $this->assertStringContainsString('Get it first', $output);
     }
+    public function test_cart_block_renders_escaped_message_before_content(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_cart_message_enabled', '1');
+        wpp_set_option('wpp_cart_messages', '<script>alert(1)</script>');
+        $output = $this->messages->render_cart_block_message('<div>Cart</div>');
+        $this->assertStringContainsString('&lt;script&gt;', $output);
+        $this->assertStringEndsWith('<div>Cart</div>', $output);
+    }
+
+    public function test_cart_block_keeps_empty_container_below_threshold(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_cart_message_enabled', '1');
+        wpp_set_option('wpp_cart_message_mode', 'threshold');
+        wpp_set_option('wpp_cart_message_threshold', '101');
+        $output = $this->messages->render_cart_block_message('<div>Cart</div>');
+        $this->assertStringContainsString('wpp-cart-block-message', $output);
+        $this->assertStringNotContainsString('wpp-motivation-message', $output);
+    }
+
+    public function test_product_block_fallback_and_duplicate_prevention(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_product_message_enabled', '1');
+        wpp_set_option('wpp_product_messages', 'Priority available');
+        $content = '<button>Add to cart</button>';
+        $output = $this->messages->render_product_block_message($content);
+        $this->assertStringContainsString('Priority available', $output);
+        $this->assertSame($output, $this->messages->render_product_block_message($output));
+    }
+
+    public function test_block_messages_are_not_added_in_admin_or_product_loops(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_product_message_enabled', '1');
+        $content = '<button>Add to cart</button>';
+        $GLOBALS['_wpp_is_product'] = false;
+        $this->assertSame($content, $this->messages->render_product_block_message($content));
+        $GLOBALS['_wpp_is_admin'] = true;
+        $this->assertSame($content, $this->messages->render_cart_block_message($content));
+    }
+
+    public function test_explicitly_empty_messages_stay_empty(): void
+    {
+        wpp_set_option('wpp_cart_messages', '');
+        $this->assertSame('', $this->randomMessage('wpp_cart_messages'));
+    }
+
+    public function test_integer_toggles_are_supported(): void
+    {
+        wpp_set_option('wpp_enabled', 1);
+        wpp_set_option('wpp_cart_message_enabled', 1);
+        $this->assertNotSame('', $this->messages->get_cart_message());
+    }
+
 }

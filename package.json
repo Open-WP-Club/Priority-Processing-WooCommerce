@@ -4,9 +4,14 @@
     "env:start": "wp-env start --update",
     "env:stop": "wp-env stop",
     "env:clean": "wp-env clean all",
-    "test:integration": "wp-env run cli --env-cwd=wp-content/plugins/Priority-Processing-WooCommerce wp eval-file tests/integration/smoke.php"
+    "test:integration": "wp-env run cli --env-cwd=wp-content/plugins/Priority-Processing-WooCommerce wp eval-file tests/integration/smoke.php",
+    "test:js": "node --test tests/js/*.test.cjs"
   },
   "devDependencies": {
-    "@wordpress/env": "^11.14.0"
+    "@wordpress/env": "^11.16.0"
+  },
+  "packageManager": "pnpm@12.9.1",
+  "engines": {
+    "node": "22.x"
   }
 }

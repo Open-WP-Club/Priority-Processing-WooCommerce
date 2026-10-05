@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 define('ABSPATH', __DIR__ . '/');
 define('WP_DEBUG_LOG', true);
+define('WPP_PLUGIN_URL', 'http://example.com/wpp/');
+define('WPP_VERSION', '1.8.1');
 
 // ---------------------------------------------------------------------------
 // WordPress function stubs
@@ -50,6 +52,8 @@ function wp_verify_nonce(): bool { return $GLOBALS['_wpp_nonce_valid'] ?? true; 
 function wp_create_nonce(): string { return 'test_nonce'; }
 function admin_url(string $path = ''): string { return 'http://example.com/wp-admin/' . $path; }
 function is_checkout(): bool { return true; }
+function is_admin(): bool { return $GLOBALS['_wpp_is_admin'] ?? false; }
+function is_product(): bool { return $GLOBALS['_wpp_is_product'] ?? true; }
 function plugin_dir_path(): string { return __DIR__ . '/../'; }
 function plugin_dir_url(): string { return 'http://example.com/wp-content/plugins/wpp/'; }
 function plugin_basename(): string { return 'woocommerce-priority-processing/woocommerce-priority-processing.php'; }
@@ -304,6 +308,8 @@ function wpp_set_option(string $key, mixed $value): void {
 
 function wpp_reset(): void {
 	$GLOBALS['_wpp_actions']          = [];
+	$GLOBALS['_wpp_is_admin'] = false;
+	$GLOBALS['_wpp_is_product'] = true;
     $GLOBALS['_wpp_options']          = [];
     $GLOBALS['_wpp_can_access']       = true;
     $GLOBALS['_wpp_can_enable']       = true;

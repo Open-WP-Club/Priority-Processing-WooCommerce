@@ -2,7 +2,7 @@
 
 A WordPress plugin that adds a priority processing and express shipping option to WooCommerce checkout, allowing customers to pay an additional fee for faster order handling.
 
-Current version: **1.8.0**
+Current version: **1.8.1**
 
 ## Features
 
@@ -21,7 +21,7 @@ Current version: **1.8.0**
 ## Requirements
 
 - WordPress 6.9+
-- WooCommerce 9.0+ (tested up to 10.8)
+- WooCommerce 9.0+ (tested up to 11.1)
 - PHP 8.1+
 
 ## Installation
@@ -48,11 +48,22 @@ Navigate to **WooCommerce > Priority Processing** to customize:
 
 ### Motivational Messages
 
-- **Cart Page Message**: Enable/disable an upsell message shown above the products table on the cart page
+- **Cart Page Message**: Enable/disable an upsell message shown above the products table on the classic cart page or above the Cart Block
 - **Product Page Message**: Enable/disable an upsell message shown under the "Add to cart" button on single product pages
 - **Display Mode**: Show each message always, or only once the cart subtotal reaches a configurable minimum
 - **Message Lists**: Enter one message per line for each location; a random one is picked on every page load, so you can add several variants
+- Supports classic product templates and WooCommerce Add to Cart blocks on single product pages
+- Cart Block messages update when quantities change or the cart crosses the configured threshold
 - Ships with example English messages, translated to Bulgarian out of the box
+
+Messages are disabled by default. Enable the main feature and each message location,
+check guest access and allowed roles, and enter at least one non-empty message.
+In threshold mode the cart subtotal must reach the configured amount; the product
+price alone does not count. Missing message options on upgraded stores use the
+default copy; deliberately empty lists remain empty. Custom theme or builder templates
+must retain the WooCommerce hooks or supported blocks. Exclude cart and checkout
+from full-page caching; cached product pages can also retain visitor-specific or
+threshold-dependent messages.
 
 ### Customer Account Badge
 
@@ -98,15 +109,29 @@ composer install
 composer test
 ```
 
+### JavaScript Tests
+
+Use Node.js 22 and pnpm 12.9.1 (pinned in `package.json`). The pnpm configuration
+allows the Playground filesystem extension to use its prebuilt native binary.
+
+```bash
+ppnpm install --frozen-lockfile --frozen-lockfile
+pnpm run test:js
+```
+
+The Node.js suite checks Cart Block Store API updates, threshold and permission
+visibility, empty carts, plain-text rendering, DOM initialization, and single
+AJAX requests after repeated classic checkout refreshes.
+
 ### WordPress and WooCommerce Integration Test
 
-Docker, Node.js 18+ and npm are required. `wp-env` creates an isolated local
+Docker, Node.js 22 and pnpm 12.9.1 are required. `wp-env` creates an isolated local
 site using PHP 8.4 and installs the latest WordPress and WooCommerce releases.
 
 ```bash
-npm install
-npm run env:start
-npm run test:integration
+pnpm install --frozen-lockfile
+pnpm run env:start
+pnpm run test:integration
 ```
 
 The integration smoke test verifies:
@@ -118,21 +143,25 @@ The integration smoke test verifies:
 - WooCommerce order creation and CRUD persistence
 - Priority and express-service order metadata
 - Priority-order queries through the WooCommerce storage API, including HPOS-compatible access
-- Cleanup of the temporary order, session state, and modified options
+- Real Cart Block message rendering and Store API message data
+- Threshold changes after quantity updates and denied guest access
+- Product block fallback messages and duplicate prevention
+- Cleanup of temporary products, cart items, orders, session state, and modified options
 
 Open the local site at `http://localhost:8888` and sign in with `admin` /
 `password`.
 
 ```bash
-npm run env:stop   # Stop the containers and preserve their data.
-npm run env:clean  # Reset the development database and environment.
+pnpm run env:stop   # Stop the containers and preserve their data.
+pnpm run env:clean  # Reset the development database and environment.
 ```
 
 For a complete local check, run both suites:
 
 ```bash
 composer test
-npm run test:integration
+pnpm run test:js
+pnpm run test:integration
 ```
 
 ## Admin Features
@@ -141,6 +170,19 @@ npm run test:integration
 - **Order Integration**: Priority status shown in order details
 - **Settings Integration**: Native WooCommerce settings interface
 - **Fallback Support**: Separate admin page if needed
+
+## Changelog
+
+### 1.8.1
+
+- Fix missing motivational messages in the WooCommerce Cart Block and block product templates.
+- Refresh Cart Block messages through Store API data after cart changes, respecting permissions and thresholds.
+- Use default message copy when options have not yet been created after an upgrade.
+- Avoid duplicate product notices and duplicate classic checkout AJAX requests.
+- Render AJAX errors as plain text.
+- Migrate development tooling and CI from npm to pnpm 12.9.1.
+- Update wp-env, PHPUnit and transitive dependencies; pin patched same-major overrides for dependencies pinned upstream.
+- Verified on WordPress 7.1.2 and WooCommerce 11.1.2.
 
 ## License
 

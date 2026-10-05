@@ -111,7 +111,7 @@ class Frontend_Blocks_Integration {
 	 * @return array<string, mixed> Priority processing data
 	 */
 	public function extend_cart_data(): array {
-		return $this->get_priority_data();
+		return array_merge( $this->get_priority_data(), array( 'cart_message' => ( new Frontend_Messages( false ) )->get_cart_message() ) );
 	}
 
 	/**
@@ -189,7 +189,13 @@ class Frontend_Blocks_Integration {
 	 * @return array<string, array<string, mixed>> Schema definition
 	 */
 	public function extend_cart_schema(): array {
-		return $this->extend_checkout_schema();
+		return array_merge( $this->extend_checkout_schema(), array(
+			'cart_message' => array(
+				'description' => __( 'Eligible cart motivational message', 'woo-priority' ),
+				'type'        => 'string',
+				'readonly'    => true,
+			),
+		) );
 	}
 
 	/**

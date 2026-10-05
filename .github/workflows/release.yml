@@ -35,9 +35,10 @@ jobs:
           --exclude='composer.json' \
           --exclude='composer.lock' \
           --exclude='package.json' \
-          --exclude='package-lock.json' \
+          --exclude='pnpm-lock.yaml' \
+          --exclude='pnpm-workspace.yaml' \
           --exclude='yarn.lock' \
-          --exclude='phpunit.xml*' \
+          --exclude='phpunit*.xml*' \
           --exclude='.phpunit*' \
           --exclude='.phpcs.xml*' \
           --exclude='webpack.config.js' \

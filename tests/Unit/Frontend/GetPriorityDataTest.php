@@ -74,4 +74,21 @@ class GetPriorityDataTest extends TestCase
         wpp_set_option('wpp_fee_label', 'Custom Rush Fee');
         $this->assertSame('Custom Rush Fee', $this->invoke()['fee_label']);
     }
+    public function test_cart_extension_respects_message_threshold_and_permissions(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_cart_message_enabled', '1');
+        wpp_set_option('wpp_cart_messages', 'Cart upsell');
+        wpp_set_option('wpp_cart_message_mode', 'threshold');
+        wpp_set_option('wpp_cart_message_threshold', '100');
+        $GLOBALS['_wpp_cart_subtotal'] = 99.0;
+        $this->assertSame('', $this->blocks->extend_cart_data()['cart_message']);
+        $GLOBALS['_wpp_cart_subtotal'] = 100.0;
+        $this->assertSame('Cart upsell', $this->blocks->extend_cart_data()['cart_message']);
+        $GLOBALS['_wpp_can_access'] = false;
+        $this->assertSame('', $this->blocks->extend_cart_data()['cart_message']);
+        $this->assertSame('string', $this->blocks->extend_cart_schema()['cart_message']['type']);
+        $this->assertArrayNotHasKey('cart_message', $this->blocks->extend_checkout_schema());
+    }
+
 }

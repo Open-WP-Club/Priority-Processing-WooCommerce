@@ -14,10 +14,6 @@
       handlePriorityChange($(this).is(':checked'));
     });
 
-    $(document.body).on('updated_checkout', function() {
-      bindCheckboxEvents();
-    });
-
     initCountdown();
   }
 
@@ -43,12 +39,6 @@
       parts.push((s < 10 ? '0' : '') + s + 's');
       $el.text('(' + parts.join(' ') + ')');
     }, 1000);
-  }
-
-  function bindCheckboxEvents() {
-    $('input[name="priority_processing"]').off('change.wpp').on('change.wpp', function() {
-      handlePriorityChange($(this).is(':checked'));
-    });
   }
 
   function handlePriorityChange(isChecked) {
@@ -85,7 +75,7 @@
 
   function showErrorMessage(message) {
     $('.wpp-error-message').remove();
-    var $error = $('<div class="woocommerce-error wpp-error-message">' + message + '</div>');
+    var $error = $('<div class="woocommerce-error wpp-error-message"></div>').text(message);
     $('.woocommerce-checkout').prepend($error);
     $('html, body').animate({ scrollTop: $error.offset().top - 100 }, 500);
     setTimeout(function() {

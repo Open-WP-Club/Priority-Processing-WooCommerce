@@ -1,0 +1,8 @@
+# Patched same-major versions for dependencies pinned by wp-env / Playground.
+overrides:
+  ajv: ^8.20.0
+  qs: ^6.16.0
+  ws: ^8.22.0
+
+allowBuilds:
+  fs-ext-extra-prebuilt: true
