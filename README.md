@@ -184,6 +184,22 @@ pnpm run test:integration
 - Update wp-env, PHPUnit and transitive dependencies; pin patched same-major overrides for dependencies pinned upstream.
 - Verified on WordPress 7.1.2 and WooCommerce 11.1.2.
 
+<!-- OPENWPCLUB_SPONSORS_START -->
+## Open-source supporters
+
+These companies help keep Open WP Club plugins free and maintained.
+
+[![Open WP Club supporters](https://openwpclub.com/sponsorship/supporters.png)](https://openwpclub.com/sponsors/)
+
+## Sponsored placements
+
+Clearly labelled promotional campaigns, separate from our supporters.
+
+[![Open WP Club sponsored placements](https://openwpclub.com/sponsorship/repos/priority-processing-woocommerce/campaigns.png)](https://openwpclub.com/advertise/)
+
+[Support our work](https://openwpclub.com/sponsors/) · [Discuss a campaign](https://openwpclub.com/advertise/)
+<!-- OPENWPCLUB_SPONSORS_END -->
+
 ## License
 
 Licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
