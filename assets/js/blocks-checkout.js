@@ -36,6 +36,32 @@
         }
       }, [priorityData.is_active]);
 
+      const [countdown, setCountdown] = useState('');
+      const cutoffTs = priorityData.cutoff_ts || 0;
+
+      // Live countdown for the same-day cutoff notice
+      useEffect(() => {
+        if (!cutoffTs) {
+          setCountdown('');
+          return undefined;
+        }
+        const tick = () => {
+          const remaining = Math.floor((cutoffTs - Date.now()) / 1000);
+          if (remaining <= 0) {
+            setCountdown('');
+            return false;
+          }
+          const h = Math.floor(remaining / 3600);
+          const m = Math.floor((remaining % 3600) / 60);
+          const sec = remaining % 60;
+          setCountdown('(' + (h > 0 ? h + 'h ' : '') + m + 'm ' + sec + 's)');
+          return true;
+        };
+        if (!tick()) return undefined;
+        const id = setInterval(() => { if (!tick()) clearInterval(id); }, 1000);
+        return () => clearInterval(id);
+      }, [cutoffTs]);
+
       // Don't render if not enabled or user doesn't have access
       if (!priorityData.enabled) {
         return null;
@@ -172,6 +198,17 @@
             onChange: handleChange,
             disabled: isProcessing
           })
+        ),
+        priorityData.cutoff_message && createElement(
+          'div',
+          {
+            className: 'wpp-cutoff-notice',
+            style: {
+              marginTop: '10px', fontSize: '12px', color: '#856404', background: '#fff3cd',
+              border: '1px solid #ffd966', borderRadius: '4px', padding: '5px 10px', display: 'inline-block'
+            }
+          },
+          '⏱ ' + priorityData.cutoff_message + (countdown ? ' ' + countdown : '')
         )
       );
     };

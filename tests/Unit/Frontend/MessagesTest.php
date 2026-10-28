@@ -246,4 +246,35 @@ class MessagesTest extends TestCase
         $this->assertNotSame('', $this->messages->get_cart_message());
     }
 
+    public function test_footer_fallback_places_product_message_when_hook_did_not_fire(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_product_message_enabled', '1');
+        ob_start();
+        $this->messages->render_fallback();
+        $this->assertStringContainsString('wpp-motivation-message', (string) ob_get_clean());
+    }
+
+    public function test_footer_fallback_skips_locations_already_rendered(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_product_message_enabled', '1');
+        ob_start();
+        $this->messages->render_product_message();
+        ob_end_clean();
+        ob_start();
+        $this->messages->render_fallback();
+        $this->assertSame('', (string) ob_get_clean());
+    }
+
+    public function test_footer_fallback_uses_cart_message_on_cart_page(): void
+    {
+        wpp_set_option('wpp_enabled', '1');
+        wpp_set_option('wpp_cart_message_enabled', '1');
+        $GLOBALS['_wpp_is_product'] = false;
+        $GLOBALS['_wpp_is_cart']    = true;
+        ob_start();
+        $this->messages->render_fallback();
+        $this->assertStringContainsString('woocommerce-cart-form', (string) ob_get_clean());
+    }
 }

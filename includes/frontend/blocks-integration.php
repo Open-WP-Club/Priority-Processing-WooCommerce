@@ -101,7 +101,7 @@ class Frontend_Blocks_Integration {
 	 * @return array<string, mixed> Priority processing data
 	 */
 	public function extend_checkout_data(): array {
-		return $this->get_priority_data();
+		return array_merge( $this->get_priority_data(), $this->get_cutoff_data() );
 	}
 
 	/**
@@ -111,7 +111,20 @@ class Frontend_Blocks_Integration {
 	 * @return array<string, mixed> Priority processing data
 	 */
 	public function extend_cart_data(): array {
-		return array_merge( $this->get_priority_data(), array( 'cart_message' => ( new Frontend_Messages( false ) )->get_cart_message() ) );
+		return array_merge( $this->get_priority_data(), $this->get_cutoff_data(), array( 'cart_message' => ( new Frontend_Messages( false ) )->get_cart_message() ) );
+	}
+
+	/**
+	 * Cutoff notice shown by the Checkout Block (classic checkout renders it server-side)
+	 *
+	 * @return array{cutoff_message: string, cutoff_ts: int}
+	 */
+	private function get_cutoff_data(): array {
+		$info = ( new Frontend_Checkout() )->get_cutoff_info();
+		return array(
+			'cutoff_message' => $info ? $info['message'] : '',
+			'cutoff_ts'      => $info ? $info['cutoff_ts'] : 0,
+		);
 	}
 
 	/**
@@ -144,6 +157,16 @@ class Frontend_Blocks_Integration {
 	 */
 	public function extend_checkout_schema(): array {
 		return array(
+			'cutoff_message' => array(
+				'description' => __( 'Same-day cutoff notice', 'woo-priority' ),
+				'type'        => 'string',
+				'readonly'    => true,
+			),
+			'cutoff_ts'      => array(
+				'description' => __( 'Cutoff timestamp in milliseconds', 'woo-priority' ),
+				'type'        => 'number',
+				'readonly'    => true,
+			),
 			'enabled'        => array(
 				'description' => __( 'Whether priority processing is available', 'woo-priority' ),
 				'type'        => 'boolean',

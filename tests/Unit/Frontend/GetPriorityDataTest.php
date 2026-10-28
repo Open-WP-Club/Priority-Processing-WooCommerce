@@ -91,4 +91,18 @@ class GetPriorityDataTest extends TestCase
         $this->assertArrayNotHasKey('cart_message', $this->blocks->extend_checkout_schema());
     }
 
+    public function test_checkout_and_cart_extensions_expose_cutoff_notice_for_blocks(): void
+    {
+        wpp_set_option('wpp_cutoff_time', '');
+        $data = $this->blocks->extend_checkout_data();
+        $this->assertSame('', $data['cutoff_message']);
+        $this->assertSame(0, $data['cutoff_ts']);
+        $this->assertArrayHasKey('cutoff_message', $this->blocks->extend_cart_data());
+
+        wpp_set_option('wpp_cutoff_time', '23:59');
+        $data = $this->blocks->extend_checkout_data();
+        $this->assertNotSame('', $data['cutoff_message']);
+        $this->assertArrayHasKey('cutoff_message', $this->blocks->extend_checkout_schema());
+        $this->assertArrayHasKey('cutoff_ts', $this->blocks->extend_checkout_schema());
+    }
 }

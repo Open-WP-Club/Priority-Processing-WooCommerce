@@ -2,7 +2,7 @@
 
 A WordPress plugin that adds a priority processing and express shipping option to WooCommerce checkout, allowing customers to pay an additional fee for faster order handling.
 
-Current version: **1.8.1**
+Current version: **1.8.2**
 
 ## Features
 
@@ -172,6 +172,12 @@ pnpm run test:integration
 - **Fallback Support**: Separate admin page if needed
 
 ## Changelog
+
+### 1.8.2
+
+- Show the same-day cutoff notice (with live countdown) in the WooCommerce Checkout Block, exposed through the Store API.
+- Add a footer fallback that places cart and product messages when a theme or layout builder (e.g. WoodMart) bypasses the WooCommerce hooks and blocks.
+- Add tests for the fallback and the block cutoff data.
 
 ### 1.8.1
 

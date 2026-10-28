@@ -133,7 +133,7 @@ class Frontend_Checkout {
    *
    * @return array{message: string, remaining_seconds: int, cutoff_ts: int}|null
    */
-  private function get_cutoff_info( ?DateTimeImmutable $now = null ): ?array {
+  public function get_cutoff_info( ?DateTimeImmutable $now = null ): ?array {
     $cutoff_time = get_option( 'wpp_cutoff_time', '' );
     if ( empty( $cutoff_time ) ) {
       return null;

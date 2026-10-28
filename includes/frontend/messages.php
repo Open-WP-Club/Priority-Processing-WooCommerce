@@ -22,6 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Frontend_Messages {
 
 	/**
+	 * Locations already rendered on this request, so the footer fallback can skip them
+	 *
+	 * @var array<string, bool>
+	 */
+	private array $rendered = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @since 1.8.0
@@ -35,6 +42,7 @@ class Frontend_Messages {
 		add_filter( 'render_block_woocommerce/cart', array( $this, 'render_cart_block_message' ) );
 		add_filter( 'render_block_woocommerce/add-to-cart-form', array( $this, 'render_product_block_message' ) );
 		add_filter( 'render_block_woocommerce/add-to-cart-with-options', array( $this, 'render_product_block_message' ) );
+		add_action( 'wp_footer', array( $this, 'render_fallback' ), 20 );
 	}
 
 	/**
@@ -46,6 +54,7 @@ class Frontend_Messages {
 	public function render_cart_message(): void {
 		$message = $this->get_cart_message();
 		if ( '' !== $message ) {
+			$this->rendered['cart'] = true;
 			$this->render_message( $message );
 		}
 	}
@@ -63,6 +72,8 @@ class Frontend_Messages {
 		if ( is_admin() || '' === trim( $content ) ) {
 			return $content;
 		}
+
+		$this->rendered['cart'] = true;
 
 		// Keep the container even below the threshold so Store API updates can reveal it.
 		wp_enqueue_script(
@@ -95,16 +106,64 @@ class Frontend_Messages {
 	 * @return void
 	 */
 	public function render_product_message(): void {
-		if ( ! $this->should_display( 'wpp_product_message_enabled', 'wpp_product_message_mode', 'wpp_product_message_threshold' ) ) {
-			return;
-		}
-
-		$message = $this->get_random_message( 'wpp_product_messages' );
+		$message = $this->get_product_message();
 		if ( '' === $message ) {
 			return;
 		}
 
+		$this->rendered['product'] = true;
 		$this->render_message( $message );
+	}
+
+	/** Return eligible product text, or an empty string when it should not be shown. */
+	public function get_product_message(): string {
+		if ( ! $this->should_display( 'wpp_product_message_enabled', 'wpp_product_message_mode', 'wpp_product_message_threshold' ) ) {
+			return '';
+		}
+		return $this->get_random_message( 'wpp_product_messages' );
+	}
+
+	/**
+	 * Place the message with JS when a theme layout builder (e.g. WoodMart) bypasses the WooCommerce hooks
+	 *
+	 * @return void
+	 */
+	public function render_fallback(): void {
+		if ( is_admin() ) {
+			return;
+		}
+
+		$location = '';
+		$message  = '';
+		if ( function_exists( 'is_product' ) && is_product() && empty( $this->rendered['product'] ) ) {
+			$location = 'product';
+			$message  = $this->get_product_message();
+		} elseif ( function_exists( 'is_cart' ) && is_cart() && empty( $this->rendered['cart'] ) ) {
+			$location = 'cart';
+			$message  = $this->get_cart_message();
+		}
+		if ( '' === $message ) {
+			return;
+		}
+
+		ob_start();
+		$this->render_message( $message );
+		$markup = (string) ob_get_clean();
+
+		// Selectors cover core WooCommerce markup plus common builder wrappers.
+		$selectors = 'product' === $location
+			? array( 'form.cart', '.single_add_to_cart_button' )
+			: array( 'form.woocommerce-cart-form', '.woocommerce-cart-form', '.shop_table.cart', '.wd-cart-table', '.cart-collaterals' );
+
+		wp_print_inline_script_tag(
+			'(function(){var h=' . wp_json_encode( $markup ) . ',s=' . wp_json_encode( $selectors ) . ',p=' . wp_json_encode( $location ) . ';'
+			. 'function go(){if(document.querySelector(".wpp-motivation-message"))return true;'
+			. 'for(var i=0;i<s.length;i++){var t=document.querySelector(s[i]);if(!t)continue;'
+			. 'var w=document.createElement("div");w.innerHTML=h;var n=w.firstElementChild;if(!n)return true;'
+			. 'if(p==="product"){t.insertAdjacentElement("afterend",n);}else{var f=t.closest("form")||t;f.parentNode.insertBefore(n,f);}return true;}return false;}'
+			. 'if(!go()){document.addEventListener("DOMContentLoaded",go,{once:true});}'
+			. 'if(window.jQuery){jQuery(document.body).on("updated_cart_totals",go);}})();'
+		);
 	}
 
 	/**
