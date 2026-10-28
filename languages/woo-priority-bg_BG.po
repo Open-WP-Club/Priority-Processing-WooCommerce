@@ -454,7 +454,7 @@ msgstr "Такса: %s"
 #: includes/core/orders.php:214 includes/frontend/cart-button.php:153
 #: includes/frontend/cart-button.php:241
 msgid "Remove Priority Processing"
-msgstr "Премахни Priority Processing"
+msgstr "Премахни приоритетната обработка"
 
 #: includes/core/orders.php:220
 msgid "Standard Processing"
@@ -703,7 +703,7 @@ msgstr "(+%s добавени към доставката)"
 
 #: includes/frontend/cart-button.php:152 includes/frontend/cart-button.php:242
 msgid "Add Priority Processing"
-msgstr "Добави Priority Processing"
+msgstr "Добави приоритетна обработка"
 
 #: includes/frontend/cart-button.php:173
 msgid "Whether the cart page toggle may be shown"
