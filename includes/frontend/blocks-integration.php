@@ -307,6 +307,11 @@ class Frontend_Blocks_Integration {
 				array(
 					'ajax_url'       => admin_url( 'admin-ajax.php' ),
 					'nonce'          => wp_create_nonce( 'wpp_nonce' ),
+					'i18n'           => array(
+						'updateError'     => __( 'Unable to update priority processing. Please try again.', 'woo-priority' ),
+						/* translators: %s: formatted fee amount */
+						'addedToShipping' => __( '(+%s added to shipping)', 'woo-priority' ),
+					),
 					'fee_amount'     => get_option( 'wpp_fee_amount', '5.00' ),
 					'fee_label'      => get_option( 'wpp_fee_label', __( 'Priority Processing & Express Shipping', 'woo-priority' ) ),
 					'section_title'  => get_option( 'wpp_section_title', __( 'Express Options', 'woo-priority' ) ),

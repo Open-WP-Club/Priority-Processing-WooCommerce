@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { readFileSync } = require('node:fs');
 const vm = require('node:vm');
 
-function boot(success = true) {
+function boot(success = true, options = {}) {
   const events = [];
   const requests = [];
   const texts = [];
@@ -25,9 +25,9 @@ function boot(success = true) {
   const $ = () => selection;
   vm.runInNewContext(readFileSync('assets/js/frontend-blocks.js', 'utf8'), {
     jQuery: $, document, URLSearchParams,
-    wppData: { ajax_url: '/ajax', nonce: 'nonce', cutoff_ts: 0 },
+    wppData: { ajax_url: '/ajax', nonce: 'nonce', cutoff_ts: 0, i18n: options.i18n },
     setTimeout() {},
-    fetch(url, options) { requests.push({ url, options }); return Promise.resolve({ json: () => Promise.resolve({ success, data: { message: error } }) }); }
+    fetch(url, request) { requests.push({ url, options: request }); if (options.reject) return Promise.reject(new Error('offline')); return Promise.resolve({ json: () => Promise.resolve({ success, data: { message: error } }) }); }
   });
   return { events, requests, texts, error, change() { for (const event of events) if (event.name.startsWith('change')) event.callback(); }, refresh() { selection.trigger('updated_checkout'); } };
 }
@@ -51,4 +51,16 @@ test('AJAX error messages are inserted through text rather than HTML', async () 
   env.change();
   await new Promise(setImmediate);
   assert.deepEqual(env.texts, [env.error]);
+});
+
+test('network failures use the translated generic error, with an English fallback', async () => {
+  const translated = boot(true, { reject: true, i18n: { genericError: 'Възникна грешка.' } });
+  translated.change();
+  await new Promise(setImmediate);
+  assert.deepEqual(translated.texts, ['Възникна грешка.']);
+
+  const fallback = boot(true, { reject: true });
+  fallback.change();
+  await new Promise(setImmediate);
+  assert.deepEqual(fallback.texts, ['An error occurred. Please try again.']);
 });

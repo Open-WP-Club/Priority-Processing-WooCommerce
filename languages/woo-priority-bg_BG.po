@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce Priority Processing 1.9.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-priority\n"
-"POT-Creation-Date: 2026-10-28T19:37:34+00:00\n"
+"POT-Creation-Date: 2026-10-28T19:42:07+00:00\n"
 "PO-Revision-Date: 2026-10-28 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
@@ -608,7 +608,7 @@ msgid "Priority status updated"
 msgstr "Приоритетният статус е обновен"
 
 #: includes/frontend/blocks-integration.php:148
-#: includes/frontend/blocks-integration.php:311
+#: includes/frontend/blocks-integration.php:316
 #: includes/frontend/checkout.php:226 includes/frontend/fees.php:86
 #: woocommerce-priority-processing.php:320
 #: woocommerce-priority-processing.php:381
@@ -616,21 +616,21 @@ msgid "Priority Processing & Express Shipping"
 msgstr "Приоритетна обработка и експресна доставка"
 
 #: includes/frontend/blocks-integration.php:149
-#: includes/frontend/blocks-integration.php:312
+#: includes/frontend/blocks-integration.php:317
 #: includes/frontend/checkout.php:46 woocommerce-priority-processing.php:321
 #: woocommerce-priority-processing.php:382
 msgid "Express Options"
 msgstr "Експресни опции"
 
 #: includes/frontend/blocks-integration.php:150
-#: includes/frontend/blocks-integration.php:313
+#: includes/frontend/blocks-integration.php:318
 #: includes/frontend/checkout.php:48 woocommerce-priority-processing.php:318
 #: woocommerce-priority-processing.php:379
 msgid "Priority processing + Express shipping"
 msgstr "Приоритетна обработка + експресна доставка"
 
 #: includes/frontend/blocks-integration.php:151
-#: includes/frontend/blocks-integration.php:314
+#: includes/frontend/blocks-integration.php:319
 #: includes/frontend/cart-button.php:154 includes/frontend/cart-button.php:239
 #: includes/frontend/checkout.php:49 woocommerce-priority-processing.php:319
 #: woocommerce-priority-processing.php:380
@@ -690,6 +690,17 @@ msgstr "Текст на описанието"
 msgid "Eligible cart motivational message"
 msgstr "Мотивационно съобщение за количката"
 
+#: includes/frontend/blocks-integration.php:311
+#: includes/frontend/cart-button.php:286
+msgid "Unable to update priority processing. Please try again."
+msgstr "Неуспешна промяна на приоритетната обработка. Опитайте отново."
+
+#. translators: %s: formatted fee amount
+#: includes/frontend/blocks-integration.php:313
+#, php-format
+msgid "(+%s added to shipping)"
+msgstr "(+%s добавени към доставката)"
+
 #: includes/frontend/cart-button.php:152 includes/frontend/cart-button.php:242
 msgid "Add Priority Processing"
 msgstr "Добави Priority Processing"
@@ -705,10 +716,6 @@ msgstr "Текст за добавяне на приоритетна обраб�
 #: includes/frontend/cart-button.php:188
 msgid "Label for removing priority processing"
 msgstr "Текст за премахване на приоритетна обработка"
-
-#: includes/frontend/cart-button.php:286
-msgid "Unable to update priority processing. Please try again."
-msgstr "Неуспешна промяна на приоритетната обработка. Опитайте отново."
 
 #. translators: 1: hours 2: minutes
 #: includes/frontend/checkout.php:166
@@ -727,6 +734,14 @@ msgid "Same-day priority cutoff has passed — next-day priority available"
 msgstr ""
 "Крайният час за приоритет в същия ден е минал — налично е приоритетно "
 "изпълнение за следващия ден"
+
+#: includes/frontend/checkout.php:229
+msgid "Unknown error"
+msgstr "Неизвестна грешка"
+
+#: includes/frontend/checkout.php:230
+msgid "An error occurred. Please try again."
+msgstr "Възникна грешка. Опитайте отново."
 
 #: includes/frontend/messages.php:254
 msgid ""

@@ -189,7 +189,7 @@ pnpm run test:integration
 - Add an orders list filter and *Mark as priority* / *Remove priority* bulk actions (HPOS and legacy).
 - Fix a fatal error when saving a settings section while fields were missing from the request.
 - Add unit tests for every new feature plus integration tests (`pnpm test:integration`) covering both order storage modes.
-- Complete the Bulgarian translation.
+- Complete the Bulgarian translation, including the checkout form and JS messages (error notices, "added to shipping" label), which are now translated server-side.
 
 ### 1.8.2
 

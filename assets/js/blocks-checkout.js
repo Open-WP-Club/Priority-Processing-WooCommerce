@@ -21,6 +21,12 @@
       return;
     }
 
+    // Translated by the server (wppBlocksData.i18n); English fallbacks keep the block working without it.
+    const i18n = Object.assign({
+      updateError: 'Unable to update priority processing. Please try again.',
+      addedToShipping: '(+%s added to shipping)'
+    }, (typeof wppBlocksData !== 'undefined' && wppBlocksData.i18n) || {});
+
     /**
      * Priority Processing Block Component
      */
@@ -105,7 +111,7 @@
               const noticesStore = window.wp.data.dispatch('core/notices');
               if (noticesStore && typeof noticesStore.createErrorNotice === 'function') {
                 noticesStore.createErrorNotice(
-                  'Unable to update priority processing. Please try again.',
+                  i18n.updateError,
                   { type: 'snackbar', isDismissible: true }
                 );
               }
@@ -133,7 +139,7 @@
             const noticesStore = window.wp.data.dispatch('core/notices');
             if (noticesStore && typeof noticesStore.createErrorNotice === 'function') {
               noticesStore.createErrorNotice(
-                'Unable to update priority processing. Please try again.',
+                i18n.updateError,
                 { type: 'snackbar', isDismissible: true }
               );
             }
@@ -188,7 +194,7 @@
                 createElement(
                   'span',
                   { style: { color: '#dc3545', fontWeight: '600', marginLeft: '5px' } },
-                  '(+' + formattedPrice + ' added to shipping)'
+                  i18n.addedToShipping.replace('%s', formattedPrice)
                 )
               ),
               description && createElement(

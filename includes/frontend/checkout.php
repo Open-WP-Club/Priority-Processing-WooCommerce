@@ -225,6 +225,10 @@ class Frontend_Checkout {
       'fee_amount' => get_option('wpp_fee_amount', '5.00'),
       'fee_label'  => get_option('wpp_fee_label', __('Priority Processing & Express Shipping', 'woo-priority')),
       'cutoff_ts'  => $cutoff_info ? $cutoff_info['cutoff_ts'] : 0,
+      'i18n'       => [
+        'unknownError' => __('Unknown error', 'woo-priority'),
+        'genericError' => __('An error occurred. Please try again.', 'woo-priority'),
+      ],
     ]);
   }
 }

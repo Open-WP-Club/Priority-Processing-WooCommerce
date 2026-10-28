@@ -9,6 +9,8 @@
     initPriorityProcessing();
   });
 
+  var i18n = Object.assign({ unknownError: 'Unknown error', genericError: 'An error occurred. Please try again.' }, wppData.i18n || {});
+
   function initPriorityProcessing() {
     $(document).on('change', '#priority_processing, input[name="priority_processing"]', function() {
       handlePriorityChange($(this).is(':checked'));
@@ -64,12 +66,12 @@
         }
         $(document.body).trigger('updated_checkout', [response.data]);
       } else {
-        var errorMsg = response.data && response.data.message ? response.data.message : 'Unknown error';
+        var errorMsg = response.data && response.data.message ? response.data.message : i18n.unknownError;
         showErrorMessage(errorMsg);
       }
     })
     .catch(function() {
-      showErrorMessage('An error occurred. Please try again.');
+      showErrorMessage(i18n.genericError);
     });
   }
 
