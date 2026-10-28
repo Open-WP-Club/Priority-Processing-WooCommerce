@@ -178,6 +178,7 @@ pnpm run test:integration
 - Show the same-day cutoff notice (with live countdown) in the WooCommerce Checkout Block, exposed through the Store API.
 - Add a footer fallback that places cart and product messages when a theme or layout builder (e.g. WoodMart) bypasses the WooCommerce hooks and blocks.
 - Add tests for the fallback and the block cutoff data.
+- Regenerate the translation template and complete the Bulgarian translation (all 167 strings).
 
 ### 1.8.1
 
