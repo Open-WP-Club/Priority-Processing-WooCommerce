@@ -2,7 +2,7 @@
 
 A WordPress plugin that adds a priority processing and express shipping option to WooCommerce checkout, allowing customers to pay an additional fee for faster order handling.
 
-Current version: **1.9.0**
+Current version: **1.9.1**
 
 ## Features
 
@@ -180,6 +180,11 @@ pnpm run test:integration
 - **Fallback Support**: Separate admin page if needed
 
 ## Changelog
+
+### 1.9.1
+
+- Fully translate the cart button labels into Bulgarian ("Добави приоритетна обработка" / "Премахни приоритетната обработка") instead of mixing English and Bulgarian.
+- Add translation tests: every template string must be translated, placeholders must match the source, and the compiled `.mo` must match the `.po`.
 
 ### 1.9.0
 

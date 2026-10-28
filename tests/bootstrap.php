@@ -5,7 +5,7 @@ declare(strict_types=1);
 define('ABSPATH', __DIR__ . '/');
 define('WP_DEBUG_LOG', true);
 define('WPP_PLUGIN_URL', 'http://example.com/wpp/');
-define('WPP_VERSION', '1.9.0');
+define('WPP_VERSION', '1.9.1');
 
 // ---------------------------------------------------------------------------
 // WordPress function stubs
