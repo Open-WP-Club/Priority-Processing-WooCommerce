@@ -2,7 +2,7 @@
 
 A WordPress plugin that adds a priority processing and express shipping option to WooCommerce checkout, allowing customers to pay an additional fee for faster order handling.
 
-Current version: **1.8.2**
+Current version: **1.9.0**
 
 ## Features
 
@@ -28,11 +28,19 @@ Current version: **1.8.2**
 
 1. Upload the plugin files to `/wp-content/plugins/woocommerce-priority-processing/`
 2. Activate the plugin through the WordPress admin
-3. Go to **WooCommerce > Priority Processing** to configure settings
+3. Go to **WooCommerce > Settings > Priority Processing** to configure settings
 
 ## Configuration
 
-Navigate to **WooCommerce > Priority Processing** to customize:
+Navigate to **WooCommerce > Settings > Priority Processing** (sections: General, Access, Display, Messages, Badge, Statistics) to customize. The old **WooCommerce > Priority Processing** URL redirects there.
+
+### Daily Limit & Cart Button
+
+- **Daily Limit**: Cap the number of priority orders per day (0 = unlimited). Once reached the option is hidden for customers, the fee cannot be applied and a sold-out notice is shown. Orders already placed and manual admin changes are not affected.
+- **Cart Page Button**: A one-click Add/Remove Priority Processing toggle on the classic cart and the Cart Block, with a footer fallback for themes/builders that bypass the WooCommerce hooks.
+- **Order List**: A Priority filter (All / Priority only / Not priority) and bulk actions *Mark as priority* / *Remove priority* on the orders screen (HPOS and legacy storage).
+
+Settings reference:
 
 ### Basic Settings
 
@@ -172,6 +180,16 @@ pnpm run test:integration
 - **Fallback Support**: Separate admin page if needed
 
 ## Changelog
+
+### 1.9.0
+
+- Move settings into a native **WooCommerce > Settings > Priority Processing** tab with sections; the old page redirects.
+- Add a one-click priority toggle on the cart page (classic cart and Cart Block).
+- Add a daily limit for priority orders with a sold-out notice in classic and block checkout.
+- Add an orders list filter and *Mark as priority* / *Remove priority* bulk actions (HPOS and legacy).
+- Fix a fatal error when saving a settings section while fields were missing from the request.
+- Add unit tests for every new feature plus integration tests (`pnpm test:integration`) covering both order storage modes.
+- Complete the Bulgarian translation.
 
 ### 1.8.2
 

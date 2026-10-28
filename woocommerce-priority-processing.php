@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce Priority Processing
  * Description: Add priority processing and express shipping option at checkout
- * Version: 1.8.2
+ * Version: 1.9.0
  * Author: OpenWPClub.com
  * Author URI: https://openwpclub.com
  * License: GPL v2 or later
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define plugin constants.
 if ( ! defined( 'WPP_VERSION' ) ) {
-	define( 'WPP_VERSION', '1.8.2' );
+	define( 'WPP_VERSION', '1.9.0' );
 }
 if ( ! defined( 'WPP_PLUGIN_DIR' ) ) {
 	define( 'WPP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -242,6 +242,10 @@ class WooCommerce_Priority_Processing {
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/blocks-integration.php';
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/messages.php';
 		require_once WPP_PLUGIN_DIR . 'includes/frontend/account.php';
+		require_once WPP_PLUGIN_DIR . 'includes/core/limits.php';
+		require_once WPP_PLUGIN_DIR . 'includes/frontend/cart-button.php';
+		require_once WPP_PLUGIN_DIR . 'includes/admin/order-list.php';
+		require_once WPP_PLUGIN_DIR . 'includes/admin/wc-settings-tab.php';
 
 		// Include API files.
 		require_once WPP_PLUGIN_DIR . 'includes/api/rest-controller.php';
@@ -271,6 +275,9 @@ class WooCommerce_Priority_Processing {
 		$this->frontend_blocks   = new Frontend_Blocks_Integration();
 		$this->frontend_messages = new Frontend_Messages();
 		$this->frontend_account  = new Frontend_Account();
+		new Frontend_Cart_Button();
+		new Admin_Order_List();
+		new Admin_WC_Settings_Tab();
 		$this->wpp_api           = new WPP_REST_Controller();
 
 		// Register settings and defaults.
@@ -325,6 +332,8 @@ class WooCommerce_Priority_Processing {
 			'wpp_product_messages'          => Frontend_Messages::get_default_product_messages(),
 			'wpp_product_message_mode'      => 'always',
 			'wpp_product_message_threshold' => '0',
+			'wpp_daily_limit'           => '0',
+			'wpp_cart_button_enabled'   => '0',
 			'wpp_account_badge_enabled' => '0',
 			'wpp_account_badge_label'   => Frontend_Account::get_default_label(),
 			'wpp_account_badge_message' => Frontend_Account::get_default_message(),

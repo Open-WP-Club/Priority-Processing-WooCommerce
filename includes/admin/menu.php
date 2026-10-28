@@ -1,7 +1,7 @@
 <?php
 /**
  * Admin Menu Handler
- * Manages admin menu registration and asset enqueuing
+ * Manages plugin action links, the legacy page redirect and asset enqueuing
  *
  * @package WooCommerce_Priority_Processing
  * @since 1.0.0
@@ -28,7 +28,7 @@ class Admin_Menu {
 		$this->statistics = $statistics_instance;
 		$this->dashboard  = $dashboard;
 
-		add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
+		add_action( 'admin_init', [ $this, 'redirect_legacy_page' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
 
 		add_filter(
@@ -48,7 +48,7 @@ class Admin_Menu {
 		$plugin_links = [
 			'settings' => sprintf(
 				'<a href="%s" style="color:#2271b1;font-weight:600;">%s</a>',
-				admin_url( 'admin.php?page=woo-priority-processing' ),
+				Admin_WC_Settings_Tab::get_tab_url(),
 				__( 'Settings', 'woo-priority' )
 			),
 			'docs'     => sprintf(
@@ -85,33 +85,25 @@ class Admin_Menu {
 	}
 
 	/**
-	 * Register WooCommerce → Priority Processing submenu page
+	 * Keep the old settings page URL working by sending it to the new settings tab
 	 */
-	public function add_admin_menu(): void {
-		add_submenu_page(
-			'woocommerce',
-			__( 'Priority Processing', 'woo-priority' ),
-			__( 'Priority Processing', 'woo-priority' ),
-			'manage_woocommerce',
-			'woo-priority-processing',
-			[ $this, 'admin_page' ]
-		);
+	public function redirect_legacy_page(): void {
+		$url = Admin_WC_Settings_Tab::get_legacy_redirect_url();
+		if ( $url === null ) {
+			return;
+		}
+
+		wp_safe_redirect( $url );
+		exit;
 	}
 
 	/**
-	 * Render admin page (uses the shared Admin_Dashboard instance)
-	 */
-	public function admin_page(): void {
-		$this->dashboard->display_page();
-	}
-
-	/**
-	 * Enqueue admin CSS + JS on our settings page
+	 * Enqueue admin CSS + JS on our WooCommerce settings tab
 	 *
 	 * @param string $hook Current admin page hook.
 	 */
 	public function admin_scripts( string $hook ): void {
-		if ( $hook !== 'woocommerce_page_woo-priority-processing' ) {
+		if ( $hook !== 'woocommerce_page_wc-settings' || ! Admin_WC_Settings_Tab::is_tab_request() ) {
 			return;
 		}
 
@@ -131,16 +123,6 @@ class Admin_Menu {
 			'refreshing_text'   => __( 'Refreshing…', 'woo-priority' ),
 			'refresh_text'      => __( 'Refresh Stats', 'woo-priority' ),
 			'error_refresh'     => __( 'Failed to refresh statistics. Please try again.', 'woo-priority' ),
-			'text_active'       => __( 'Active', 'woo-priority' ),
-			'text_inactive'     => __( 'Inactive', 'woo-priority' ),
-			'text_allowed'      => __( 'Allowed', 'woo-priority' ),
-			'text_denied'       => __( 'Denied', 'woo-priority' ),
-			'text_shop_managers'  => __( 'Shop Managers & Administrators', 'woo-priority' ),
-			'text_guests'         => __( 'Guest Users', 'woo-priority' ),
-			'text_available_to'   => __( 'Priority processing is available to:', 'woo-priority' ),
-			'text_only_managers'  => __( 'Only Shop Managers currently have access to priority processing', 'woo-priority' ),
-			'text_available'      => __( 'Available to:', 'woo-priority' ),
-			'text_no_access'      => __( 'No access granted', 'woo-priority' ),
 		] );
 	}
 

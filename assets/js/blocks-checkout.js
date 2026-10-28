@@ -64,6 +64,9 @@
 
       // Don't render if not enabled or user doesn't have access
       if (!priorityData.enabled) {
+        if (priorityData.limit_reached && priorityData.limit_message) {
+          return createElement('div', { className: 'wpp-limit-notice' }, priorityData.limit_message);
+        }
         return null;
       }
 

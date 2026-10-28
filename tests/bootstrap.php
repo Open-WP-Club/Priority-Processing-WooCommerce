@@ -5,7 +5,7 @@ declare(strict_types=1);
 define('ABSPATH', __DIR__ . '/');
 define('WP_DEBUG_LOG', true);
 define('WPP_PLUGIN_URL', 'http://example.com/wpp/');
-define('WPP_VERSION', '1.8.2');
+define('WPP_VERSION', '1.9.0');
 
 // ---------------------------------------------------------------------------
 // WordPress function stubs
@@ -88,6 +88,12 @@ function wp_get_current_user(): object {
         'display_name' => $GLOBALS['_wpp_current_user_display_name'] ?? 'Admin',
     ];
 }
+function get_transient(string $key): mixed { return $GLOBALS['_wpp_transients'][$key] ?? false; }
+function set_transient(string $key, mixed $value, int $ttl = 0): bool { $GLOBALS['_wpp_transients'][$key] = $value; return true; }
+function delete_transient(string $key): bool { unset($GLOBALS['_wpp_transients'][$key]); return true; }
+function wc_get_order_statuses(): array {
+    return ['wc-pending' => 'Pending', 'wc-processing' => 'Processing', 'wc-on-hold' => 'On hold', 'wc-completed' => 'Completed', 'wc-cancelled' => 'Cancelled', 'wc-refunded' => 'Refunded', 'wc-failed' => 'Failed'];
+}
 function wc_get_order(int $id): WC_Order|false {
     return $GLOBALS['_wpp_orders'][$id] ?? false;
 }
@@ -101,6 +107,7 @@ function wc_get_orders(array $args): object {
         throw new Exception('wc_get_orders stub failure');
     }
 
+    $GLOBALS['_wpp_last_order_query_args'] = $args;
     $page = $args['paged'] ?? 1;
     return $GLOBALS['_wpp_order_query_pages'][$page] ?? (object) [
         'orders'        => [],
@@ -123,6 +130,29 @@ class WPP_Json_Error extends \Error {
 }
 function wp_send_json_success(mixed $data = null): void { throw new WPP_Json_Success($data); }
 function wp_send_json_error(mixed $data = null): void { throw new WPP_Json_Error($data); }
+
+// Stubs for the orders list filter / bulk actions (guarded: other tests may define them too).
+if (!function_exists('absint')) {
+    function absint(mixed $v): int { return abs((int) $v); }
+}
+if (!function_exists('_n')) {
+    function _n(string $single, string $plural, int $number, string $domain = ''): string { return $number === 1 ? $single : $plural; }
+}
+if (!function_exists('add_query_arg')) {
+    function add_query_arg(string $key, mixed $value, string $url): string {
+        $sep = str_contains($url, '?') ? '&' : '?';
+        return $url . $sep . rawurlencode($key) . '=' . rawurlencode((string) $value);
+    }
+}
+if (!function_exists('remove_query_arg')) {
+    function remove_query_arg(array|string $keys, string $url): string {
+        $parts = explode('?', $url, 2);
+        if (!isset($parts[1])) { return $url; }
+        parse_str($parts[1], $query);
+        foreach ((array) $keys as $k) { unset($query[$k]); }
+        return $query ? $parts[0] . '?' . http_build_query($query) : $parts[0];
+    }
+}
 // error_log() is a native PHP function — no stub needed
 
 // ---------------------------------------------------------------------------
@@ -300,6 +330,10 @@ require_once __DIR__ . '/../includes/frontend/shipping.php';
 require_once __DIR__ . '/../includes/api/rest-controller.php';
 require_once __DIR__ . '/../includes/frontend/ajax.php';
 require_once __DIR__ . '/../includes/frontend/blocks-integration.php';
+require_once __DIR__ . '/../includes/core/limits.php';
+require_once __DIR__ . '/../includes/frontend/cart-button.php';
+require_once __DIR__ . '/../includes/admin/order-list.php';
+require_once __DIR__ . '/../includes/admin/wc-settings-tab.php';
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -330,6 +364,7 @@ function wpp_reset(): void {
     $GLOBALS['_wpp_wc_instance']          = new WC_Stub();
     $GLOBALS['_wpp_order_query_pages']    = [];
     $GLOBALS['_wpp_wc_get_orders_throws'] = false;
+    $GLOBALS['_wpp_transients']           = [];
     $_POST                                = [];
     WooCommerce_Priority_Processing::reset_for_tests();
 }

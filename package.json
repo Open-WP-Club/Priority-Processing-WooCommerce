@@ -4,7 +4,7 @@
     "env:start": "wp-env start --update",
     "env:stop": "wp-env stop",
     "env:clean": "wp-env clean all",
-    "test:integration": "wp-env run cli --env-cwd=wp-content/plugins/Priority-Processing-WooCommerce wp eval-file tests/integration/smoke.php",
+    "test:integration": "wp-env run cli --env-cwd=wp-content/plugins/Priority-Processing-WooCommerce wp eval-file tests/integration/smoke.php && wp-env run cli --env-cwd=wp-content/plugins/Priority-Processing-WooCommerce wp eval-file tests/integration/features.php",
     "test:js": "node --test tests/js/*.test.cjs"
   },
   "devDependencies": {

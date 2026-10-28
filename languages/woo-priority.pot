@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Priority Processing 1.8.2\n"
+"Project-Id-Version: WooCommerce Priority Processing 1.9.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-priority\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-28T19:12:39+00:00\n"
+"POT-Creation-Date: 2026-10-28T19:37:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woo-priority\n"
@@ -34,82 +34,59 @@ msgstr ""
 msgid "https://openwpclub.com"
 msgstr ""
 
-#: includes/admin/dashboard.php:44
-msgid "Priority Processing Settings"
+#: includes/admin/class-wc-settings-priority.php:20
+#: includes/core/orders.php:49
+msgid "Priority Processing"
 msgstr ""
 
-#: includes/admin/dashboard.php:48
-msgid "Settings saved successfully!"
-msgstr ""
-
-#: includes/admin/dashboard.php:48
-msgid "Your priority processing options are now active."
-msgstr ""
-
-#: includes/admin/dashboard.php:63
-msgid "Priority Processing Statistics"
-msgstr ""
-
-#: includes/admin/dashboard.php:67
+#: includes/admin/dashboard.php:37
 #, php-format
 msgid "Cached for %d hours"
 msgstr ""
 
-#: includes/admin/dashboard.php:69
+#: includes/admin/dashboard.php:39
 msgid "Live data"
 msgstr ""
 
-#: includes/admin/dashboard.php:74
-#: includes/admin/menu.php:132
+#: includes/admin/dashboard.php:44
+#: includes/admin/menu.php:124
 msgid "Refresh Stats"
 msgstr ""
 
-#: includes/admin/dashboard.php:84
-msgid "Note:"
-msgstr ""
-
-#: includes/admin/dashboard.php:84
+#: includes/admin/dashboard.php:53
 msgid "Statistics are cached for 24 hours to improve performance. Click \"Refresh Stats\" to get the latest data."
 msgstr ""
 
-#: includes/admin/dashboard.php:99
+#: includes/admin/dashboard.php:67
 msgid "Total Priority Orders"
 msgstr ""
 
-#: includes/admin/dashboard.php:105
+#: includes/admin/dashboard.php:73
 msgid "Total Priority Revenue"
 msgstr ""
 
-#: includes/admin/dashboard.php:111
+#: includes/admin/dashboard.php:79
 msgid "Priority Rate"
 msgstr ""
 
-#: includes/admin/dashboard.php:117
+#: includes/admin/dashboard.php:85
 msgid "Average Fee"
 msgstr ""
 
-#: includes/admin/dashboard.php:123
+#: includes/admin/dashboard.php:91
 msgid "Today"
 msgstr ""
 
-#: includes/admin/dashboard.php:129
+#: includes/admin/dashboard.php:97
 msgid "This Week"
 msgstr ""
 
-#: includes/admin/dashboard.php:135
+#: includes/admin/dashboard.php:103
 msgid "This Month"
 msgstr ""
 
-#: includes/admin/dashboard.php:141
+#: includes/admin/dashboard.php:109
 msgid "Last Updated"
-msgstr ""
-
-#: includes/admin/dashboard.php:166
-msgid "Configuration"
-msgstr ""
-
-#: includes/admin/dashboard.php:180
-msgid "Save Changes"
 msgstr ""
 
 #: includes/admin/menu.php:52
@@ -128,326 +105,277 @@ msgstr ""
 msgid "GitHub"
 msgstr ""
 
-#: includes/admin/menu.php:93
-#: includes/admin/menu.php:94
-#: includes/core/orders.php:49
-msgid "Priority Processing"
-msgstr ""
-
-#: includes/admin/menu.php:131
+#: includes/admin/menu.php:123
 msgid "Refreshing…"
 msgstr ""
 
-#: includes/admin/menu.php:133
+#: includes/admin/menu.php:125
 msgid "Failed to refresh statistics. Please try again."
 msgstr ""
 
-#: includes/admin/menu.php:134
-#: includes/admin/settings.php:215
-#: includes/admin/settings.php:426
-#: includes/admin/settings.php:470
-#: includes/admin/settings.php:529
-msgid "Active"
+#: includes/admin/order-list.php:76
+msgid "Priority: All"
 msgstr ""
 
-#: includes/admin/menu.php:135
-#: includes/admin/settings.php:215
-#: includes/admin/settings.php:426
-#: includes/admin/settings.php:470
-#: includes/admin/settings.php:529
-msgid "Inactive"
+#: includes/admin/order-list.php:77
+msgid "Priority only"
 msgstr ""
 
-#: includes/admin/menu.php:136
-#: includes/admin/settings.php:297
-msgid "Allowed"
+#: includes/admin/order-list.php:78
+msgid "Not priority"
 msgstr ""
 
-#: includes/admin/menu.php:137
-#: includes/admin/settings.php:297
-msgid "Denied"
+#: includes/admin/order-list.php:186
+msgid "Mark as priority"
 msgstr ""
 
-#: includes/admin/menu.php:138
-#: includes/core/permissions.php:180
-msgid "Shop Managers & Administrators"
+#: includes/admin/order-list.php:187
+msgid "Remove priority"
 msgstr ""
 
-#: includes/admin/menu.php:139
-#: includes/core/permissions.php:192
-msgid "Guest Users"
+#: includes/admin/order-list.php:251
+msgid "No orders were changed. The selected orders already have priority or cannot be modified."
 msgstr ""
 
-#: includes/admin/menu.php:140
-#: includes/admin/settings.php:315
-msgid "Priority processing is available to:"
+#. translators: %d: number of orders
+#: includes/admin/order-list.php:255
+#, php-format
+msgid "%d order marked as priority."
+msgid_plural "%d orders marked as priority."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/order-list.php:263
+msgid "No orders were changed. The selected orders do not have priority or cannot be modified."
 msgstr ""
 
-#: includes/admin/menu.php:141
-msgid "Only Shop Managers currently have access to priority processing"
+#. translators: %d: number of orders
+#: includes/admin/order-list.php:267
+#, php-format
+msgid "Priority removed from %d order."
+msgid_plural "Priority removed from %d orders."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/wc-settings-tab.php:94
+#: includes/admin/wc-settings-tab.php:131
+msgid "General"
 msgstr ""
 
-#: includes/admin/menu.php:142
-#: includes/admin/settings.php:601
-msgid "Available to:"
+#: includes/admin/wc-settings-tab.php:95
+#: includes/admin/wc-settings-tab.php:195
+msgid "Access"
 msgstr ""
 
-#: includes/admin/menu.php:143
-msgid "No access granted"
+#: includes/admin/wc-settings-tab.php:96
+#: includes/admin/wc-settings-tab.php:234
+#: includes/admin/wc-settings-tab.php:317
+msgid "Display"
 msgstr ""
 
-#: includes/admin/settings.php:201
-msgid "Basic Settings"
+#: includes/admin/wc-settings-tab.php:97
+msgid "Messages"
 msgstr ""
 
-#: includes/admin/settings.php:206
-msgid "Enable Feature"
-msgstr ""
-
-#: includes/admin/settings.php:218
-msgid "Enable or disable the priority processing option at checkout"
-msgstr ""
-
-#: includes/admin/settings.php:224
-msgid "Additional Fee"
-msgstr ""
-
-#: includes/admin/settings.php:229
-msgid "Amount to charge for priority processing and express shipping"
-msgstr ""
-
-#: includes/admin/settings.php:235
-msgid "Minimum Order Amount"
-msgstr ""
-
-#: includes/admin/settings.php:240
-msgid "Minimum cart subtotal required to show the priority option. Set to 0 to disable."
-msgstr ""
-
-#: includes/admin/settings.php:255
-msgid "User Permissions"
-msgstr ""
-
-#: includes/admin/settings.php:260
-msgid "Allowed User Roles"
-msgstr ""
-
-#: includes/admin/settings.php:279
-msgid "Select which user roles can access the priority processing option. "
-msgstr ""
-
-#: includes/admin/settings.php:280
-msgid "Shop Managers and Administrators always have access."
-msgstr ""
-
-#: includes/admin/settings.php:287
-msgid "Guest Access"
-msgstr ""
-
-#: includes/admin/settings.php:300
-msgid "Allow non-logged-in users (guests) to access priority processing option"
-msgstr ""
-
-#: includes/admin/settings.php:306
-msgid "Current Access"
-msgstr ""
-
-#: includes/admin/settings.php:324
-msgid "No users currently have access to priority processing"
-msgstr ""
-
-#: includes/admin/settings.php:328
-msgid "This shows who can currently see and use the priority processing option"
-msgstr ""
-
-#: includes/admin/settings.php:343
-msgid "Display Settings"
-msgstr ""
-
-#: includes/admin/settings.php:348
-msgid "Section Title"
-msgstr ""
-
-#: includes/admin/settings.php:353
-msgid "Heading shown above the priority processing option"
-msgstr ""
-
-#: includes/admin/settings.php:359
-msgid "Checkbox Label"
-msgstr ""
-
-#: includes/admin/settings.php:364
-msgid "Text displayed next to the checkbox option"
-msgstr ""
-
-#: includes/admin/settings.php:370
-msgid "Help Text"
-msgstr ""
-
-#: includes/admin/settings.php:374
-msgid "Additional explanation shown below the checkbox"
-msgstr ""
-
-#: includes/admin/settings.php:380
-msgid "Fee Label"
-msgstr ""
-
-#: includes/admin/settings.php:385
-msgid "How the fee appears in cart totals and order summaries"
-msgstr ""
-
-#: includes/admin/settings.php:391
-msgid "Same-Day Cutoff Time"
-msgstr ""
-
-#: includes/admin/settings.php:396
-msgid "Show a live countdown at checkout until this time (store timezone). Leave empty to disable."
-msgstr ""
-
-#: includes/admin/settings.php:411
-msgid "Motivational Messages"
-msgstr ""
-
-#: includes/admin/settings.php:412
-msgid "Show a randomly picked upsell message on the cart page and on product pages to nudge shoppers toward Priority Processing. Enable each location once you have reviewed the wording below."
-msgstr ""
-
-#: includes/admin/settings.php:417
-msgid "Cart Page Message"
-msgstr ""
-
-#: includes/admin/settings.php:429
-msgid "Shown under the products table on the cart page."
-msgstr ""
-
-#: includes/admin/settings.php:434
-msgid "Cart Message Display"
-msgstr ""
-
-#: includes/admin/settings.php:438
-#: includes/admin/settings.php:482
-msgid "Always show"
-msgstr ""
-
-#: includes/admin/settings.php:442
-msgid "Only when cart subtotal is at least:"
-msgstr ""
-
-#: includes/admin/settings.php:451
-msgid "Cart Messages"
-msgstr ""
-
-#: includes/admin/settings.php:455
-#: includes/admin/settings.php:499
-msgid "One message per line. A random one is shown on each page load."
-msgstr ""
-
-#: includes/admin/settings.php:461
-msgid "Product Page Message"
-msgstr ""
-
-#: includes/admin/settings.php:473
-msgid "Shown under the \"Add to cart\" button on single product pages."
-msgstr ""
-
-#: includes/admin/settings.php:478
-msgid "Product Message Display"
-msgstr ""
-
-#: includes/admin/settings.php:486
-msgid "Only when current cart subtotal is at least:"
-msgstr ""
-
-#: includes/admin/settings.php:495
-msgid "Product Messages"
-msgstr ""
-
-#: includes/admin/settings.php:514
+#: includes/admin/wc-settings-tab.php:98
+#: includes/admin/wc-settings-tab.php:355
 msgid "Customer Account Badge"
 msgstr ""
 
-#: includes/admin/settings.php:515
+#: includes/admin/wc-settings-tab.php:99
+msgid "Statistics"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:136
+msgid "Enable Feature"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:140
+msgid "Enable or disable the priority processing option at checkout"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:143
+msgid "Additional Fee"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:147
+msgid "Amount to charge for priority processing and express shipping"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:151
+msgid "Fee Label"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:155
+msgid "How the fee appears in cart totals and order summaries"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:158
+msgid "Minimum Order Amount"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:162
+msgid "Minimum cart subtotal required to show the priority option. Set to 0 to disable."
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:166
+msgid "Daily Limit"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:170
+msgid "Maximum number of priority orders per day. Once reached, the option is hidden or disabled for customers. Set to 0 for unlimited."
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:174
+msgid "Same-Day Cutoff Time"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:178
+msgid "Show a live countdown at checkout until this time (store timezone). Leave empty to disable."
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:200
+msgid "Allowed User Roles"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:207
+msgid "Select which user roles can access the priority processing option. Shop Managers and Administrators always have access."
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:211
+msgid "Guest Access"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:215
+msgid "Allow non-logged-in users (guests) to access priority processing option"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:218
+msgid "Current Access"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:239
+msgid "Section Title"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:243
+msgid "Heading shown above the priority processing option"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:246
+msgid "Checkbox Label"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:251
+msgid "Text displayed next to the checkbox option"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:254
+msgid "Help Text"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:259
+msgid "Additional explanation shown below the checkbox"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:262
+msgid "Cart Page Button"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:266
+msgid "Show a one-click priority toggle on the cart page"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:280
+msgid "Always show"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:281
+msgid "Only when cart subtotal is at least the threshold"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:286
+msgid "Motivational Messages"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:288
+msgid "Show a randomly picked upsell message on the cart page and on product pages to nudge shoppers toward Priority Processing. Enable each location once you have reviewed the wording below."
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:295
+msgid "Cart Page Message"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:296
+msgid "Shown under the products table on the cart page."
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:297
+msgid "Cart Messages"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:301
+msgid "Product Page Message"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:302
+msgid "Shown under the \"Add to cart\" button on single product pages."
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:303
+msgid "Product Messages"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:324
+msgid "Subtotal Threshold"
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:336
+msgid "One message per line. A random one is shown on each page load."
+msgstr ""
+
+#: includes/admin/wc-settings-tab.php:357
 msgid "Show a confirmation badge on the order details view in My Account, so customers can see the priority status when they revisit an order later (the checkout thank-you page already shows its own confirmation message)."
 msgstr ""
 
-#: includes/admin/settings.php:520
+#: includes/admin/wc-settings-tab.php:361
 msgid "Enable Badge"
 msgstr ""
 
-#: includes/admin/settings.php:532
+#: includes/admin/wc-settings-tab.php:365
 msgid "Shown on orders with priority processing when viewed via My Account > Orders."
 msgstr ""
 
-#: includes/admin/settings.php:538
+#: includes/admin/wc-settings-tab.php:368
 msgid "Badge Label"
 msgstr ""
 
-#: includes/admin/settings.php:548
+#: includes/admin/wc-settings-tab.php:374
 msgid "Badge Message"
 msgstr ""
 
-#: includes/admin/settings.php:566
-msgid "Live Preview"
+#: includes/admin/wc-settings-tab.php:393
+msgid "Priority Processing Statistics"
 msgstr ""
 
-#: includes/admin/settings.php:571
-msgid "Current Fee"
+#: includes/admin/wc-settings-tab.php:523
+msgid "Priority processing is available to:"
 msgstr ""
 
-#: includes/admin/settings.php:575
-msgid "Status"
+#: includes/admin/wc-settings-tab.php:530
+msgid "No users currently have access to priority processing"
 msgstr ""
 
-#: includes/admin/settings.php:579
-msgid "How it appears at checkout:"
-msgstr ""
-
-#: includes/admin/settings.php:596
-msgid "Permission Summary"
-msgstr ""
-
-#: includes/admin/settings.php:610
-msgid "Order Management"
-msgstr ""
-
-#: includes/admin/settings.php:612
-msgid "Priority orders will be clearly marked with ⚡ lightning bolts in your order list and individual order pages for easy identification."
-msgstr ""
-
-#: includes/admin/settings.php:617
-msgid "Quick Tips"
-msgstr ""
-
-#: includes/admin/settings.php:619
-msgid "Set competitive but profitable fee amounts based on your fulfillment costs"
-msgstr ""
-
-#: includes/admin/settings.php:620
-msgid "Use clear, benefit-focused language in your checkbox label"
-msgstr ""
-
-#: includes/admin/settings.php:621
-msgid "Keep descriptions concise but informative about delivery timeframes"
-msgstr ""
-
-#: includes/admin/settings.php:622
-msgid "Priority orders are automatically marked with ⚡ in your admin area"
-msgstr ""
-
-#: includes/admin/settings.php:623
-msgid "Control access with user roles and guest permissions for security"
-msgstr ""
-
-#: includes/admin/settings.php:628
-msgid "Important"
-msgstr ""
-
-#: includes/admin/settings.php:630
-msgid "Make sure to fulfill priority orders faster than regular orders to maintain customer satisfaction and justify the additional fee."
+#: includes/admin/wc-settings-tab.php:532
+msgid "Reflects the saved settings: who can currently see and use the priority processing option"
 msgstr ""
 
 #: includes/api/rest-controller.php:97
 msgid "Statistics refreshed successfully"
+msgstr ""
+
+#: includes/core/limits.php:132
+msgid "Priority slots for today are sold out"
 msgstr ""
 
 #: includes/core/orders.php:50
@@ -460,7 +388,7 @@ msgid "⚡ Priority Processing"
 msgstr ""
 
 #: includes/core/orders.php:203
-#: includes/core/orders.php:462
+#: includes/core/orders.php:517
 msgid "Priority Processing Active"
 msgstr ""
 
@@ -471,6 +399,8 @@ msgid "Fee: %s"
 msgstr ""
 
 #: includes/core/orders.php:214
+#: includes/frontend/cart-button.php:153
+#: includes/frontend/cart-button.php:241
 msgid "Remove Priority Processing"
 msgstr ""
 
@@ -518,54 +448,74 @@ msgstr ""
 msgid "Cannot modify this order status"
 msgstr ""
 
-#: includes/core/orders.php:286
+#: includes/core/orders.php:284
 msgid "Order already has priority processing"
 msgstr ""
 
-#: includes/core/orders.php:298
+#: includes/core/orders.php:288
 msgid "Order already has a priority processing fee"
 msgstr ""
 
+#: includes/core/orders.php:291
+msgid "Priority processing added successfully!"
+msgstr ""
+
+#: includes/core/orders.php:293
+msgid "Priority processing removed successfully!"
+msgstr ""
+
+#: includes/core/orders.php:309
+msgid "An error occurred while updating the order"
+msgstr ""
+
 #. translators: 1: user display name, 2: formatted fee
-#: includes/core/orders.php:320
+#: includes/core/orders.php:361
+#, php-format
+msgid "⚡ Priority processing added by %1$s via bulk action. Fee: %2$s"
+msgstr ""
+
+#. translators: 1: user display name, 2: formatted fee
+#: includes/core/orders.php:367
 #, php-format
 msgid "⚡ Priority processing added by %1$s. Fee: %2$s"
 msgstr ""
 
-#: includes/core/orders.php:327
-msgid "Priority processing added successfully!"
+#. translators: %s: user display name
+#: includes/core/orders.php:397
+#, php-format
+msgid "❌ Priority processing removed by %s via bulk action"
 msgstr ""
 
 #. translators: %s: user display name
-#: includes/core/orders.php:348
+#: includes/core/orders.php:402
 #, php-format
 msgid "❌ Priority processing removed by %s"
 msgstr ""
 
-#: includes/core/orders.php:354
-msgid "Priority processing removed successfully!"
-msgstr ""
-
-#: includes/core/orders.php:384
-msgid "An error occurred while updating the order"
-msgstr ""
-
-#: includes/core/orders.php:410
+#: includes/core/orders.php:465
 msgid "Error:"
 msgstr ""
 
-#: includes/core/orders.php:411
+#: includes/core/orders.php:466
 msgid "Connection error. Please try again."
 msgstr ""
 
-#: includes/core/orders.php:436
+#: includes/core/orders.php:491
 msgid "Priority Processing Activated!"
 msgstr ""
 
 #. translators: %s: fee label
-#: includes/core/orders.php:442
+#: includes/core/orders.php:497
 #, php-format
 msgid "Your order includes %s. We'll process and ship your order as quickly as possible!"
+msgstr ""
+
+#: includes/core/permissions.php:180
+msgid "Shop Managers & Administrators"
+msgstr ""
+
+#: includes/core/permissions.php:192
+msgid "Guest Users"
 msgstr ""
 
 #: includes/core/statistics.php:263
@@ -600,92 +550,126 @@ msgstr ""
 msgid "Priority status updated"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:145
-#: includes/frontend/blocks-integration.php:298
-#: includes/frontend/checkout.php:218
+#: includes/frontend/blocks-integration.php:148
+#: includes/frontend/blocks-integration.php:311
+#: includes/frontend/checkout.php:226
 #: includes/frontend/fees.php:86
-#: woocommerce-priority-processing.php:313
-#: woocommerce-priority-processing.php:372
+#: woocommerce-priority-processing.php:320
+#: woocommerce-priority-processing.php:381
 msgid "Priority Processing & Express Shipping"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:146
-#: includes/frontend/blocks-integration.php:299
-#: includes/frontend/checkout.php:43
-#: woocommerce-priority-processing.php:314
-#: woocommerce-priority-processing.php:373
+#: includes/frontend/blocks-integration.php:149
+#: includes/frontend/blocks-integration.php:312
+#: includes/frontend/checkout.php:46
+#: woocommerce-priority-processing.php:321
+#: woocommerce-priority-processing.php:382
 msgid "Express Options"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:147
-#: includes/frontend/blocks-integration.php:300
-#: includes/frontend/checkout.php:45
-#: woocommerce-priority-processing.php:311
-#: woocommerce-priority-processing.php:370
+#: includes/frontend/blocks-integration.php:150
+#: includes/frontend/blocks-integration.php:313
+#: includes/frontend/checkout.php:48
+#: woocommerce-priority-processing.php:318
+#: woocommerce-priority-processing.php:379
 msgid "Priority processing + Express shipping"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:148
-#: includes/frontend/blocks-integration.php:301
-#: includes/frontend/checkout.php:46
-#: woocommerce-priority-processing.php:312
-#: woocommerce-priority-processing.php:371
+#: includes/frontend/blocks-integration.php:151
+#: includes/frontend/blocks-integration.php:314
+#: includes/frontend/cart-button.php:154
+#: includes/frontend/cart-button.php:239
+#: includes/frontend/checkout.php:49
+#: woocommerce-priority-processing.php:319
+#: woocommerce-priority-processing.php:380
 msgid "Your order will be processed with priority and shipped via express delivery"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:161
+#: includes/frontend/blocks-integration.php:164
 msgid "Same-day cutoff notice"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:166
+#: includes/frontend/blocks-integration.php:169
 msgid "Cutoff timestamp in milliseconds"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:171
+#: includes/frontend/blocks-integration.php:174
 msgid "Whether priority processing is available"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:176
+#: includes/frontend/blocks-integration.php:179
+msgid "Whether the daily priority limit has been reached"
+msgstr ""
+
+#: includes/frontend/blocks-integration.php:184
+msgid "Notice shown when the daily priority limit is reached"
+msgstr ""
+
+#: includes/frontend/blocks-integration.php:189
+#: includes/frontend/cart-button.php:178
 msgid "Whether priority processing is currently active"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:181
+#: includes/frontend/blocks-integration.php:194
+#: includes/frontend/cart-button.php:183
 msgid "Priority processing fee amount"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:186
+#: includes/frontend/blocks-integration.php:199
 msgid "Fee label text"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:191
+#: includes/frontend/blocks-integration.php:204
 msgid "Section title"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:196
+#: includes/frontend/blocks-integration.php:209
 msgid "Checkbox label text"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:201
+#: includes/frontend/blocks-integration.php:214
+#: includes/frontend/cart-button.php:189
 msgid "Description text"
 msgstr ""
 
-#: includes/frontend/blocks-integration.php:217
+#: includes/frontend/blocks-integration.php:230
 msgid "Eligible cart motivational message"
 msgstr ""
 
+#: includes/frontend/cart-button.php:152
+#: includes/frontend/cart-button.php:242
+msgid "Add Priority Processing"
+msgstr ""
+
+#: includes/frontend/cart-button.php:173
+msgid "Whether the cart page toggle may be shown"
+msgstr ""
+
+#: includes/frontend/cart-button.php:187
+msgid "Label for adding priority processing"
+msgstr ""
+
+#: includes/frontend/cart-button.php:188
+msgid "Label for removing priority processing"
+msgstr ""
+
+#: includes/frontend/cart-button.php:286
+msgid "Unable to update priority processing. Please try again."
+msgstr ""
+
 #. translators: 1: hours 2: minutes
-#: includes/frontend/checkout.php:158
+#: includes/frontend/checkout.php:166
 #, php-format
 msgid "Order in the next %1$dh %2$dm for same-day priority"
 msgstr ""
 
 #. translators: %d: minutes
-#: includes/frontend/checkout.php:160
+#: includes/frontend/checkout.php:168
 #, php-format
 msgid "Order in the next %d minutes for same-day priority"
 msgstr ""
 
-#: includes/frontend/checkout.php:169
+#: includes/frontend/checkout.php:177
 msgid "Same-day priority cutoff has passed — next-day priority available"
 msgstr ""
 
@@ -737,6 +721,6 @@ msgstr ""
 msgid "⏳ Every extra day of waiting is a day too many. Speed it up with Priority Processing."
 msgstr ""
 
-#: woocommerce-priority-processing.php:295
+#: woocommerce-priority-processing.php:302
 msgid "WooCommerce Priority Processing requires WooCommerce to be installed and active."
 msgstr ""

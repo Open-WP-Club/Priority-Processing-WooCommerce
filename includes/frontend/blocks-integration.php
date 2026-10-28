@@ -137,9 +137,12 @@ class Frontend_Blocks_Integration {
 		$is_enabled = get_option( 'wpp_enabled' ) === '1';
 		$can_access = Core_Permissions::can_access_priority_processing();
 		$is_active  = Core_Permissions::is_priority_active();
+		$sold_out   = $is_enabled && $can_access && Core_Limits::is_limit_reached();
 
 		return array(
-			'enabled'        => $is_enabled && $can_access,
+			'enabled'        => $is_enabled && $can_access && ! $sold_out,
+			'limit_reached'  => $sold_out,
+			'limit_message'  => $sold_out ? Core_Limits::get_limit_message() : '',
 			'is_active'      => $is_active,
 			'fee_amount'     => floatval( get_option( 'wpp_fee_amount', '5.00' ) ),
 			'fee_label'      => get_option( 'wpp_fee_label', __( 'Priority Processing & Express Shipping', 'woo-priority' ) ),
@@ -170,6 +173,16 @@ class Frontend_Blocks_Integration {
 			'enabled'        => array(
 				'description' => __( 'Whether priority processing is available', 'woo-priority' ),
 				'type'        => 'boolean',
+				'readonly'    => true,
+			),
+			'limit_reached'  => array(
+				'description' => __( 'Whether the daily priority limit has been reached', 'woo-priority' ),
+				'type'        => 'boolean',
+				'readonly'    => true,
+			),
+			'limit_message'  => array(
+				'description' => __( 'Notice shown when the daily priority limit is reached', 'woo-priority' ),
+				'type'        => 'string',
 				'readonly'    => true,
 			),
 			'is_active'      => array(

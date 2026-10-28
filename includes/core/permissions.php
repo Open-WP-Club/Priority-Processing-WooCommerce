@@ -226,6 +226,11 @@ class Core_Permissions {
       return false;
     }
 
+    // Daily limit: sold-out days block new activations (existing orders are untouched).
+    if ( class_exists( 'Core_Limits' ) && Core_Limits::is_limit_reached() ) {
+      return false;
+    }
+
     $minimum = max( 0.0, (float) get_option( 'wpp_min_order_amount', '0' ) );
     if ( $minimum <= 0 ) {
       return true;

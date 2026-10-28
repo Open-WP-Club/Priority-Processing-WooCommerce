@@ -37,6 +37,9 @@ class Frontend_Checkout {
    */
   public function display_priority_section($checkout) {
     if (!$this->should_display_field()) {
+      if ($this->should_display_field(true) && Core_Limits::is_limit_reached()) {
+        echo '<div class="wpp-limit-notice woocommerce-info">' . esc_html(Core_Limits::get_limit_message()) . '</div>';
+      }
       return;
     }
 
@@ -109,7 +112,7 @@ class Frontend_Checkout {
   /**
    * Check if priority field should be displayed
    */
-  private function should_display_field() {
+  private function should_display_field(bool $ignore_limit = false) {
     if ( get_option( 'wpp_enabled' ) !== '1' ) {
       return false;
     }
@@ -123,6 +126,11 @@ class Frontend_Checkout {
       if ( WC()->cart->get_subtotal() < $min_amount ) {
         return false;
       }
+    }
+
+    // Hide the option once today's priority slots are used up.
+    if (!$ignore_limit && Core_Limits::is_limit_reached()) {
+      return false;
     }
 
     return true;

@@ -277,98 +277,23 @@ class Core_Orders {
 		}
 
 		try {
-			$fee_amount   = floatval( get_option( 'wpp_fee_amount', '5.00' ) );
-			$fee_label    = get_option( 'wpp_fee_label', 'Priority Processing & Express Shipping' );
-			$current_user = wp_get_current_user();
+			$fee_label = get_option( 'wpp_fee_label', 'Priority Processing & Express Shipping' );
 
 			if ( $action === 'add' ) {
 				if ( $order->get_meta( '_priority_processing' ) === 'yes' ) {
 					wp_send_json_error( __( 'Order already has priority processing', 'woo-priority' ) );
 				}
 
-				$existing_fee = null;
-				foreach ( $order->get_fees() as $fee ) {
-					if ( Frontend_Fees::is_priority_fee( $fee, (string) $fee_label ) ) {
-						$existing_fee = $fee;
-						break;
-					}
-				}
-
-				if ( $existing_fee ) {
+				if ( $this->find_priority_fee( $order, (string) $fee_label ) ) {
 					wp_send_json_error( __( 'Order already has a priority processing fee', 'woo-priority' ) );
 				}
 
-				$order->update_meta_data( '_priority_processing', 'yes' );
-				$order->update_meta_data( '_requires_express_shipping', 'yes' );
-				$order->update_meta_data( '_priority_fee_amount', $fee_amount );
-				$order->update_meta_data( '_priority_service_level', 'express' );
-
-				if ( $fee_amount > 0 ) {
-					$fee = new WC_Order_Item_Fee();
-					$fee->set_name( $fee_label );
-					$fee->set_amount( $fee_amount );
-					$fee->set_total( $fee_amount );
-					$fee->set_order_id( $order_id );
-					$fee->add_meta_data( Frontend_Fees::FEE_META_KEY, Frontend_Fees::FEE_META_VALUE, true );
-					$order->add_item( $fee );
-					wpp_log( "Added priority fee of {$fee_amount} to order #{$order_id}" );
-				}
-
-				$order->add_order_note(
-					sprintf(
-						/* translators: 1: user display name, 2: formatted fee */
-						__( '⚡ Priority processing added by %1$s. Fee: %2$s', 'woo-priority' ),
-						$current_user->display_name,
-						wc_price( $fee_amount )
-					),
-					false
-				);
-
 				$message = __( 'Priority processing added successfully!', 'woo-priority' );
-
 			} else {
-				$order->delete_meta_data( '_priority_processing' );
-				$order->delete_meta_data( '_requires_express_shipping' );
-				$order->delete_meta_data( '_priority_fee_amount' );
-				$order->delete_meta_data( '_priority_service_level' );
-
-				$fees_to_remove = [];
-				foreach ( $order->get_fees() as $fee_id => $fee ) {
-					if ( Frontend_Fees::is_priority_fee( $fee, (string) $fee_label ) ) {
-						$fees_to_remove[] = $fee_id;
-					}
-				}
-				foreach ( $fees_to_remove as $fee_id ) {
-					$order->remove_item( $fee_id );
-				}
-
-				$order->add_order_note(
-					sprintf(
-						/* translators: %s: user display name */
-						__( '❌ Priority processing removed by %s', 'woo-priority' ),
-						$current_user->display_name
-					),
-					false
-				);
-
 				$message = __( 'Priority processing removed successfully!', 'woo-priority' );
 			}
 
-			$order->calculate_totals();
-			$order->save();
-
-			if ( function_exists( 'wc_delete_shop_order_transients' ) ) {
-				wc_delete_shop_order_transients( $order_id );
-			}
-
-			do_action( 'wpp_order_priority_toggled', $order_id, $action, $current_user->ID );
-
-			$wpp = WooCommerce_Priority_Processing::instance();
-			if ( $wpp->core_statistics ) {
-				$wpp->core_statistics->clear_cache();
-			}
-
-			wpp_log( "Priority processing {$action}ed for order #{$order_id} by {$current_user->display_name}" );
+			$this->apply_priority_change( $order, $action );
 
 			wp_send_json_success( [
 				'message'       => $message,
@@ -383,6 +308,136 @@ class Core_Orders {
 			wpp_log( 'Order Priority Toggle Error: ' . $e->getMessage() );
 			wp_send_json_error( __( 'An error occurred while updating the order', 'woo-priority' ) );
 		}
+	}
+
+	/**
+	 * Add or remove priority on an order (meta, fee, note, caches).
+	 * Shared by the AJAX toggle and the orders list bulk actions.
+	 *
+	 * @param WC_Order $order  Order to change.
+	 * @param string   $action 'add' or 'remove'.
+	 * @param bool     $bulk   Whether the change comes from a bulk action (changes the order note wording).
+	 * @return bool False when nothing changed (no-op or locked order status).
+	 */
+	public function apply_priority_change( WC_Order $order, string $action, bool $bulk = false ): bool {
+		if ( ! in_array( $action, [ 'add', 'remove' ], true ) ) {
+			return false;
+		}
+		if ( in_array( $order->get_status(), [ 'completed', 'refunded', 'cancelled' ], true ) ) {
+			return false;
+		}
+
+		$order_id     = $order->get_id();
+		$fee_amount   = floatval( get_option( 'wpp_fee_amount', '5.00' ) );
+		$fee_label    = (string) get_option( 'wpp_fee_label', 'Priority Processing & Express Shipping' );
+		$current_user = wp_get_current_user();
+		$has_priority = $order->get_meta( '_priority_processing' ) === 'yes';
+
+		if ( $action === 'add' ) {
+			if ( $has_priority || $this->find_priority_fee( $order, $fee_label ) ) {
+				return false;
+			}
+
+			$order->update_meta_data( '_priority_processing', 'yes' );
+			$order->update_meta_data( '_requires_express_shipping', 'yes' );
+			$order->update_meta_data( '_priority_fee_amount', $fee_amount );
+			$order->update_meta_data( '_priority_service_level', 'express' );
+
+			if ( $fee_amount > 0 ) {
+				$fee = new WC_Order_Item_Fee();
+				$fee->set_name( $fee_label );
+				$fee->set_amount( $fee_amount );
+				$fee->set_total( $fee_amount );
+				$fee->set_order_id( $order_id );
+				$fee->add_meta_data( Frontend_Fees::FEE_META_KEY, Frontend_Fees::FEE_META_VALUE, true );
+				$order->add_item( $fee );
+				wpp_log( "Added priority fee of {$fee_amount} to order #{$order_id}" );
+			}
+
+			$order->add_order_note(
+				$bulk
+					? sprintf(
+						/* translators: 1: user display name, 2: formatted fee */
+						__( '⚡ Priority processing added by %1$s via bulk action. Fee: %2$s', 'woo-priority' ),
+						$current_user->display_name,
+						wc_price( $fee_amount )
+					)
+					: sprintf(
+						/* translators: 1: user display name, 2: formatted fee */
+						__( '⚡ Priority processing added by %1$s. Fee: %2$s', 'woo-priority' ),
+						$current_user->display_name,
+						wc_price( $fee_amount )
+					),
+				false
+			);
+		} else {
+			$priority_fee_ids = [];
+			foreach ( $order->get_fees() as $fee_id => $fee ) {
+				if ( Frontend_Fees::is_priority_fee( $fee, $fee_label ) ) {
+					$priority_fee_ids[] = $fee_id;
+				}
+			}
+			if ( ! $has_priority && ! $priority_fee_ids ) {
+				return false;
+			}
+
+			$order->delete_meta_data( '_priority_processing' );
+			$order->delete_meta_data( '_requires_express_shipping' );
+			$order->delete_meta_data( '_priority_fee_amount' );
+			$order->delete_meta_data( '_priority_service_level' );
+
+			foreach ( $priority_fee_ids as $fee_id ) {
+				$order->remove_item( $fee_id );
+			}
+
+			$order->add_order_note(
+				$bulk
+					? sprintf(
+						/* translators: %s: user display name */
+						__( '❌ Priority processing removed by %s via bulk action', 'woo-priority' ),
+						$current_user->display_name
+					)
+					: sprintf(
+						/* translators: %s: user display name */
+						__( '❌ Priority processing removed by %s', 'woo-priority' ),
+						$current_user->display_name
+					),
+				false
+			);
+		}
+
+		$order->calculate_totals();
+		$order->save();
+
+		if ( function_exists( 'wc_delete_shop_order_transients' ) ) {
+			wc_delete_shop_order_transients( $order_id );
+		}
+
+		do_action( 'wpp_order_priority_toggled', $order_id, $action, $current_user->ID );
+
+		$wpp = WooCommerce_Priority_Processing::instance();
+		if ( $wpp->core_statistics ) {
+			$wpp->core_statistics->clear_cache();
+		}
+
+		wpp_log( "Priority processing {$action}ed for order #{$order_id} by {$current_user->display_name}" );
+
+		return true;
+	}
+
+	/**
+	 * Find the priority fee item on an order, if any
+	 *
+	 * @param WC_Order $order     Order to inspect.
+	 * @param string   $fee_label Configured fee label.
+	 */
+	private function find_priority_fee( WC_Order $order, string $fee_label ): ?WC_Order_Item_Fee {
+		foreach ( $order->get_fees() as $fee ) {
+			if ( Frontend_Fees::is_priority_fee( $fee, $fee_label ) ) {
+				return $fee;
+			}
+		}
+		return null;
 	}
 
 	/**
