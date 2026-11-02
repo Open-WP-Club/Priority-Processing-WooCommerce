@@ -2,7 +2,7 @@
 
 A WordPress plugin that adds a priority processing and express shipping option to WooCommerce checkout, allowing customers to pay an additional fee for faster order handling.
 
-Current version: **1.9.1**
+Current version: **1.9.2**
 
 ## Features
 
@@ -180,6 +180,11 @@ pnpm run test:integration
 - **Fallback Support**: Separate admin page if needed
 
 ## Changelog
+
+### 1.9.2
+
+- Hide the priority message inside the WoodMart sticky add-to-cart bar (mobile), where it broke the layout. The message under the main add-to-cart button is unchanged.
+- Add tests for the theme compatibility styles.
 
 ### 1.9.1
 

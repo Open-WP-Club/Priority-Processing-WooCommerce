@@ -30,6 +30,42 @@ class MessagesTest extends TestCase
 
     // -- should_display() -----------------------------------------------
 
+    public function test_registers_theme_compat_styles_in_head(): void
+    {
+        $callbacks = $GLOBALS['_wpp_actions']['wp_head'] ?? [];
+
+        $this->assertCount(1, $callbacks);
+        $this->assertSame([$this->messages, 'print_theme_compat_styles'], $callbacks[0]['callback']);
+    }
+
+    public function test_theme_compat_styles_hide_message_in_sticky_add_to_cart_bar(): void
+    {
+        ob_start();
+        $this->messages->print_theme_compat_styles();
+        $output = (string) ob_get_clean();
+
+        $this->assertStringContainsString('.wd-sticky-btn .wpp-motivation-message{display:none!important}', $output);
+        $this->assertStringStartsWith('<style', $output);
+    }
+
+    public function test_theme_compat_styles_only_print_on_product_pages(): void
+    {
+        $GLOBALS['_wpp_is_product'] = false;
+        ob_start();
+        $this->messages->print_theme_compat_styles();
+        $this->assertSame('', (string) ob_get_clean());
+    }
+
+    public function test_theme_compat_styles_do_not_hide_the_main_product_message(): void
+    {
+        ob_start();
+        $this->messages->print_theme_compat_styles();
+        $output = (string) ob_get_clean();
+
+        $this->assertStringNotContainsString('}.wpp-motivation-message', $output);
+        $this->assertStringNotContainsString('<style id="wpp-theme-compat">.wpp-motivation-message', $output);
+    }
+
     public function test_registers_cart_message_above_cart_table(): void
     {
         $callbacks = $GLOBALS['_wpp_actions']['woocommerce_before_cart_table'] ?? [];

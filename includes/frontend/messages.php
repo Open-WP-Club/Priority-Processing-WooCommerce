@@ -43,6 +43,21 @@ class Frontend_Messages {
 		add_filter( 'render_block_woocommerce/add-to-cart-form', array( $this, 'render_product_block_message' ) );
 		add_filter( 'render_block_woocommerce/add-to-cart-with-options', array( $this, 'render_product_block_message' ) );
 		add_action( 'wp_footer', array( $this, 'render_fallback' ), 20 );
+		add_action( 'wp_head', array( $this, 'print_theme_compat_styles' ) );
+	}
+
+	/**
+	 * Hide the message inside theme widgets that reuse the add-to-cart form and break on extra markup
+	 *
+	 * WoodMart renders form.cart again in its sticky add-to-cart bar (the mobile bottom bar).
+	 *
+	 * @return void
+	 */
+	public function print_theme_compat_styles(): void {
+		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+			return;
+		}
+		echo '<style id="wpp-theme-compat">.wd-sticky-btn .wpp-motivation-message{display:none!important}</style>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
 	}
 
 	/**
