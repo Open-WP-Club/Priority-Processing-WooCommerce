@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: WooCommerce Priority Processing
+ * Tested up to: 7.1.4
  * Description: Add priority processing and express shipping option at checkout
  * Version: 1.9.2
  * Author: OpenWPClub.com
@@ -12,7 +13,7 @@
  * Requires at least: 6.9
  * Requires PHP: 8.1
  * WC requires at least: 9.0
- * WC tested up to: 11.1
+ * WC tested up to: 11.2.2
  * Requires Plugins: woocommerce
  *
  * @package WooCommerce_Priority_Processing
